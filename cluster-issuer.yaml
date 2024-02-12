@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: lets-encrypt # the docs of MicroK8s use “lets-encrypt” as cluster issuer name and in the TSG documentation its without hyphen (“letsencrypt”).
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: atzortzis@epu.ntua.gr
+    privateKeySecretRef:
+      name: lets-encrypt # the docs of MicroK8s use “lets-encrypt” as cluster issuer name and in the TSG documentation its without hyphen (“letsencrypt”).
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+          podTemplate:
+            spec:
+              nodeSelector:
+                "kubernetes.io/os": linux
