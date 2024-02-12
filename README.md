@@ -129,6 +129,7 @@ The default data app should appear at: `https://domain-name/data-app/` (forward 
 # Clean-up
 To delete the connector and remove all related resources:
 ```bash
+microk8s kubectl delete clusterissuer lets-encrypt
 microk8s kubectl delete secret/ids-identity-secret
 microk8s helm uninstall ntua-connector -n default
 ```
