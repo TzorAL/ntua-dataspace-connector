@@ -1,0 +1,128 @@
+# -- Default host for ingress resources
+host: tsg-connector.domain.com
+
+coreContainer:
+  # -- Replicas as specified in the core container deployment
+  replicaCount: 1
+  # -- Core Container docker image name
+  image: docker.nexus.dataspac.es/core-container:1.1.0
+  # Ingress Service configuration
+  ingress:
+    # -- Ingress path
+    path: /(.*)
+    # -- Ingress rewrite target
+    rewriteTarget: /$1
+
+adminUi:
+  # -- Toggle for enabling the Core Container Administration UI
+  enabled: true
+  # -- Docker image to use for the UI
+  image: docker.nexus.dataspac.es/core-container-ui:master
+  ingress:
+    # -- Ingress path
+    path: /ui(/|$)(.*)
+    # -- Ingress rewrite target
+    rewriteTarget: /$2
+    # -- Ingress clusterIssuer for automatic TLS certificate request by Cert Manager
+    clusterIssuer: letsencrypt
+
+# IDS Core Container configuration
+ids:
+  # Generic information on the IDS connector for usage in the Self Description that will be shared with the Broker
+  info:
+    # -- IDS Component Identity (URI based identifier)
+    idsid: IDS_COMPONENT_ID
+    # -- IDS Participant Identity, aimed at the participant that is responsible for the contents of the connector (URI based identifier)
+    curator: IDS_PARTICIPANT_ID
+    # -- IDS Participant Identity, aimed at the participant that is responsible for the technical side of the connector (URI based identifier)
+    maintainer: IDS_PARTICIPANT_ID
+    # -- Title of the Connector
+    titles:
+      - CONNECTOR TITLE@en
+    # -- Description of the Connector
+    descriptions:
+      - CONNECTOR DESCRIPTION@en
+    # -- Publicly accessible access URL(s) of the Connector
+    accessUrl:
+      - https://{{ .Values.host }}/router
+
+  # Dynamic Attribute Provisioning Service (DAPS) configuration
+  daps:
+    # -- Dynamic Attribute Provisioning Service URL
+    url: DAPS_URL
+
+  # Broker Configuration
+  broker:
+    # -- Broker IDS Identifier
+    id: BROKER_ID
+    # -- Broker Access URL
+    address: BROKER_ACCESS_URL
+
+  # Route configuration
+  routes:
+    # Ingress route configuration
+    ingress:
+      # HTTP ingress route configuration
+      http:
+        - # -- Exposed public endpoint
+          endpoint: router
+          # -- Data App endpoint the requests are routed to
+          dataApp: http://{{ template "tsg-connector.fullname" . }}-openapi-data-app-http:8080/router
+  # Core Container API Security for data apps (API Keys) and admin UI (user credentials)
+  security:
+    # API Key Configuration
+    apiKeys:
+      - # -- API Key identifier
+        id: default
+        # -- API Key (must start with "APIKEY-")
+        key: APIKEY-BQf3ta9Gkkr36MtQjRsQ3noX
+        # -- API Key role assignments
+        roles:
+          - DATA_APP
+          - PEF_MANAGER
+
+    # API User Configuration
+    users:
+      - # -- User identifier (also used as username for the user)
+        id: admin
+        # -- BCrypt encoded password
+        password: $2a$12$Xx4uZNtOBu91N0.D1GBi6ePelIJbNT8UzDppN.fU0P4lomlG/BcCm
+        # -- User role assignments
+        roles:
+          - ADMIN
+
+containers:
+  - # -- Container Type. Either `data-app` (for data-app containers healthchecks and configuration are configured out of the box) or `helper`
+    type: data-app
+    # -- Container Name
+    name: openapi-data-app
+    # -- Container Image (including tag)
+    image: docker.nexus.dataspac.es/data-apps/openapi-data-app:2.1.0
+    # -- Core Container API Key
+    apiKey: APIKEY-BQf3ta9Gkkr36MtQjRsQ3noX
+    config:
+      openApi:
+        openApiBaseUrl: https://api-specs.ids.smart-connected.nl/specs/scsn/
+        versions:
+          - 0.4.6
+        agents:
+          - id: urn:scsn:87654321
+            title: TNO SCSN Test Seller Agent A Test
+            backendUrl: http://{{ template "tsg-connector.fullname" $ }}-scsn-seller-impl-a-http:8081/api
+            config:
+              connector:
+                SUPPORTEDMESSAGES: Order1.1
+              cac:PartyLegalEntity:
+                cbc:CompanyID: "2347654234"
+              cac:PartyTaxScheme:
+                cbc:CompanyID: "23476542341"
+          - id: urn:scsn:76543210
+            title: TNO SCSN Test Seller Agent B
+            backendUrl: http://{{ template "tsg-connector.fullname" $ }}-scsn-seller-impl-a-http:8081/api
+            config:
+              connector:
+                SUPPORTEDMESSAGES: Order1.1
+              cac:PartyLegalEntity:
+                cbc:CompanyID: "798675432"
+              cac:PartyTaxScheme:
+                cbc:CompanyID: "7986754321"

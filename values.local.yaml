@@ -1,0 +1,100 @@
+coreContainer:
+  # -- Core Container docker image name
+  image: docker.nexus.dataspac.es/core-container:feature-open-sourcing
+
+adminUi:
+  # -- Docker image to use for the UI
+  image: docker.nexus.dataspac.es/ui/core-container-ui:master
+  nodePort: 31000
+
+# IDS Core Container configuration
+ids:
+  # Generic information on the IDS connector for usage in the Self Description that will be shared with the Broker
+  info:
+    # -- IDS Component Identity (URI based identifier)
+    idsid: urn:ids:enershare:connectors:NTUA-Test-Connector
+    # -- IDS Participant Identity, aimed at the participant that is responsible for the contents of the connector (URI based identifier)
+    curator: urn:ids:enershare:participants:NTUA
+    # -- IDS Participant Identity, aimed at the participant that is responsible for the technical side of the connector (URI based identifier)
+    maintainer: urn:ids:enershare:participants:NTUA
+    # -- Title of the Connector
+    titles:
+      - Playground Local Demo Connector@en
+    # -- Description of the Connector
+    descriptions:
+      - Playground Local Demo Connector@en
+    # -- Publicly accessible access URL(s) of the Connector
+    accessUrl:
+      - http://localhost/router
+
+  # Core Container API Security for data apps (API Keys) and admin UI (user credentials)
+  security:
+    # API User Configuration
+    apiKeys:
+      - id: default
+        key: APIKEY-BQf3ta9Gkkr36MtQjRsQ3noX
+        roles:
+          - DATA_APP
+          - PEF_MANAGER
+    users:
+      - # -- User identifier (also used as username for the user)
+        id: admin
+        # -- BCrypt encoded password (defaults to: playground)
+        password: $2a$12$q0rBD9B7C8Xuj9V/tLb0xOnJuX2v9cll6AqBoO4oOybCsGDPVfpf6
+        # -- User role assignments
+        roles:
+          - ADMIN
+
+  # Dynamic Attribute Provisioning Service (DAPS) configuration
+  daps:
+    # -- Dynamic Attribute Provisioning Service URL
+    url: https://daps.playground.dataspac.es/v2
+
+  # Broker Configuration
+  broker:
+    # -- Broker IDS Identifier
+    id: urn:playground:tsg:connectors:MetadataBroker
+    # -- Broker Access URL
+    address: https://broker.playground.dataspac.es/infrastructure
+    autoRegister: false
+
+  # Orchestration Manager configuration
+  orchestrationManagerConfig:
+    # -- Enable Kubernetes orchestration (auto-configuring when deployed in a Kubernetes environment)
+    enableKubernetes: false
+# Uncomment the block below to enable the OpenAPI data app
+containers:
+  - # -- Container Type. Either `data-app` (for data-app containers healthchecks and configuration are configured out of the box) or `helper`
+    type: data-app
+    # -- Container Name
+    name: openapi-data-app
+    # -- Container Image (including tag)
+    image: docker.nexus.dataspac.es/data-apps/openapi-data-app:feature-infomodel-4.2.7
+    # -- Core Container API Key
+    apiKey: APIKEY-BQf3ta9Gkkr36MtQjRsQ3noX
+    config:
+      # -- OpenAPI Data App configuration
+      openApi:
+        usePolicyEnforcement: false
+        openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/I814/httpbin/
+        versions:
+        - 0.9.2
+  - type: helper
+    image: docker.nexus.dataspac.es/data-apps/openapi-data-app-consumer:master
+    name: httpbin-ui
+    services:
+      - port: 80
+        nodePort: 31001
+        name: http
+
+    environment:
+    - name: FORWARD_TO
+      value: urn:playground:tsg:connectors:TestConsumer:AgentA
+    - name: FORWARD_SENDER
+      value: urn:tsg:playground:connectors:LocalTest
+    - name: FORWARD_RECIPIENT
+      value: urn:playground:tsg:connectors:TestConsumer:AgentA
+    - name: FORWARD_ACCESSURL
+      value: https://test-connector.playground.dataspac.es/router
+    - name: API_BACKEND
+      value: http://{{ template "tsg-connector.fullname" $ }}-openapi-data-app-http:8080/openapi/0.9.2/

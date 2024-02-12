@@ -1,0 +1,55 @@
+{{- range $container := .Values.containers }}
+  {{ range $container.services }}
+    {{- if hasKey . "ingress" }}
+{{- if $.Values.useNewIngress }}
+apiVersion: networking.k8s.io/v1
+{{- else }}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ template "tsg-connector.fullname" $ }}-{{ $container.name }}-{{ .name }}
+  labels: {{ include "tsg-connector.labels" $ | nindent 4 }}
+  annotations:
+      {{- with $.Values.deployment.annotations }}
+        {{- tpl (toYaml . ) $ | nindent 4 }}
+      {{- end }}
+      {{- with .ingress.annotations }}
+        {{- tpl (toYaml .) $ | nindent 4 }}
+      {{- end }}
+    kubernetes.io/ingress.class: nginx
+      {{- if .ingress.clusterIssuer }}
+    cert-manager.io/cluster-issuer: {{ .ingress.clusterIssuer }}
+      {{- end }}
+      {{- with .ingress.rewriteTarget }}
+    nginx.ingress.kubernetes.io/rewrite-target: {{ . }}
+      {{- end }}
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+spec:
+  tls:
+  - hosts:
+    - {{ .ingress.host | default $.Values.host }}
+    secretName: {{ .ingress.secretName | default (printf "%s-tls-secret" (.ingress.host | default $.Values.host)) }}
+  rules:
+  - host: {{ .ingress.host | default $.Values.host }}
+    http:
+      paths:
+{{- if $.Values.useNewIngress }}
+      - pathType: Prefix
+        backend:
+          service:
+            name: {{ template "tsg-connector.fullname" $ }}-{{ $container.name }}-{{ .name }}
+            port:
+              number: {{ .port }}
+        path: {{ .ingress.path | default (printf "/%s" .name) }} 
+{{- else }}
+      - backend:
+          serviceName: {{ template "tsg-connector.fullname" $ }}-{{ $container.name }}-{{ .name }}
+          servicePort: {{ .port }}
+        path: {{ .ingress.path | default (printf "/%s" .name) }} 
+{{- end }}
+---
+
+    {{- end }}
+  {{- end }}
+{{- end }}

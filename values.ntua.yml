@@ -1,0 +1,70 @@
+host: enershare.epu.ntua.gr
+
+coreContainer:
+  image: docker.nexus.dataspac.es/core-container:1.1.1
+  ingress:
+    path: /(.*)
+    rewriteTarget: /$1
+    clusterIssuer: letsencrypt
+    ingressClass: nginx
+
+adminUi:
+  enabled: true
+  image: docker.nexus.dataspac.es/ui/core-container-ui:master
+  ingress:
+    path: /ui/(.*)
+    rewriteTarget: /$1
+
+ids:
+  info:
+    idsid: urn:ids:enershare:connectors:NTUA:Consumer
+    curator: urn:ids:enershare:participants:NTUA
+    maintainer: urn:ids:enershare:participants:NTUA
+    titles:
+      - NTUA Meter Consumer Example@en
+    descriptions:
+      - NTUA Meter Consumer Example@en
+    accessUrl:
+      - https://{{ .Values.host }}/router
+
+  security:
+    apiKeys:
+      - id: default
+        key: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE # CHANGE (also at line 55)
+        roles:
+          - DATA_APP
+          - PEF_MANAGER
+    users:
+      - id: admin
+        # -- BCrypt encoded password (defaults to enershare)
+        password: $2a$12$cOEhv/gcpyCFs5KkObTbweQ0axqwIuKysZdeJMArNxHCXWzYayddu
+        roles:
+          - ADMIN
+
+  daps:
+    url: https://daps.enershare.dataspac.es/v2
+
+  broker:
+    id: urn:ids:enershare:connectors:MetadataBroker
+    address: https://broker.enershare.dataspac.es/infrastructure
+    autoRegister: true
+
+containers:
+  - type: data-app
+    name: openapi-data-app
+    image: docker.nexus.dataspac.es/data-apps/openapi-data-app:2.1.0
+    apiKey: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE # CHANGE (also at line 32)
+    config:
+      openApi:
+        usePolicyEnforcement: false
+        agents:
+          - id: urn:ids:enershare:connectors:NTUA:Consumer:ConsumerAgent
+            title: NTUA Meter Consumer Agent
+    services:
+      - port: 8080
+        name: http
+        ingress:
+          path: /data-app/(.*)
+          rewriteTarget: /$1
+          clusterIssuer: letsencrypt
+          ingressClass: nginx

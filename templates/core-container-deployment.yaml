@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "tsg-connector.fullname" . }}-core-container
+  labels: {{ include "tsg-connector.labels" $ | nindent 4 }}
+{{- with .Values.deployment.annotations }}
+  annotations: {{ toYaml . | nindent 4 }}
+{{- end }}
+spec:
+  replicas: {{ .Values.coreContainer.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "tsg-connector.fullname" . }}-core-container
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  {{- with .Values.coreContainer.updateStrategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ template "tsg-connector.fullname" . }}-core-container
+        app.kubernetes.io/instance: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include ("tsg-connector.core-container-configmap") $ | sha256sum }}
+    spec:
+      {{- if $.Values.pullSecret }}
+      {{- if $.Values.pullSecret.name }}
+      imagePullSecrets:
+        - name: {{ $.Values.pullSecret.name }}
+      {{- end }}
+      {{- end }}
+      containers:
+        - name: "core-container"
+          image: {{ .Values.coreContainer.image }}
+          imagePullPolicy: {{ .Values.deployment.pullPolicy }}
+          {{- with .Values.coreContainer.resources }}
+          resources: {{ toYaml . | nindent 12 }}
+          {{- else }}
+          resources:
+            requests:
+              memory: "220Mi"
+              cpu: "100m"
+            limits:
+              cpu: "1000m"
+          {{- end }}
+          {{- with .Values.coreContainer.environment }}
+          env: {{ tpl (toYaml . ) $ | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: camel
+              containerPort: 8080
+              protocol: TCP
+            - name: api
+              containerPort: 8082
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8082
+            {{- with .Values.coreContainer.livenessProbe }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8082
+            {{- with .Values.coreContainer.startupProbe }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+          - name: {{ template "tsg-connector.fullname" . }}-core-container-config
+            mountPath: /config/
+          - name: {{ template "tsg-connector.fullname" . }}-ids-identity
+            mountPath: /secrets/idsidentity/
+            readOnly: true
+          {{- with .Values.coreContainer.persistentVolume }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+          {{- end }}
+      volumes:
+      - name: {{ template "tsg-connector.fullname" . }}-core-container-config
+        configMap:
+          name: {{ template "tsg-connector.fullname" . }}-core-container-config
+      - name: {{ template "tsg-connector.fullname" . }}-ids-identity
+        secret:
+          secretName: {{ .Values.coreContainer.secrets.idsIdentity.name }}
+          defaultMode: 0400
+      {{- with .Values.coreContainer.persistentVolume}}
+      - name: {{ .name }}
+        {{- if .azureFile }}
+        azureFile: {{- toYaml .azureFile | nindent 10 }}
+        {{- else if .azureDisk }}
+        azureDisk: {{- toYaml .azureDisk | nindent 10 }}
+        {{- else }}
+        persistentVolumeClaim:
+          claimName: {{ .name }}
+        {{- end }}
+      {{- end }}
+      {{- with .tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}

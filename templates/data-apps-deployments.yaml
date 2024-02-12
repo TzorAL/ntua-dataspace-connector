@@ -1,0 +1,167 @@
+{{- range .Values.containers }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "tsg-connector.fullname" $ }}-{{ .name }}
+  labels: {{ include "tsg-connector.labels" $ | nindent 4 }}
+{{- with $.Values.deployment.annotations }}
+  annotations: {{ toYaml . | nindent 4 }}
+{{- end }}
+spec:
+{{- $isDataApp := eq .type "data-app" }}
+{{- $hasVolumes := or $isDataApp .persistentVolume .hostPath .secrets .configMaps }}
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "tsg-connector.fullname" $ }}-{{ .name }}
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+  {{- with .updateStrategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ template "tsg-connector.fullname" $ }}-{{ .name }}
+        app.kubernetes.io/instance: {{ $.Release.Name }}
+      annotations:
+        checksum/config: {{ include "tsg-connector.data-app-configmap" (list . $) | sha256sum }}
+    {{- with $.Values.deployment.annotations }}
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
+    spec:
+      {{- if $.Values.pullSecret }}
+      {{- if $.Values.pullSecret.name }}
+      imagePullSecrets:
+        - name: {{ $.Values.pullSecret.name }}
+      {{- end }}
+      {{- end }}
+      {{- with .securityContext }}
+      securityContext: {{ toYaml . | nindent 9 }}
+      {{- end }}
+      containers:
+        - name: {{ .type }}
+          image: {{ .image }}
+          imagePullPolicy: {{ $.Values.deployment.pullPolicy }}
+          {{- with .resources }}
+          resources: {{ toYaml . | nindent 13 }}
+          {{- else }}
+          resources:
+            requests:
+              memory: "220Mi"
+              cpu: "100m"
+            limits:
+              cpu: "1000m"
+          {{- end }}
+          {{- with .command }}
+          command: {{ toYaml . | nindent 13 }}
+          {{- end }}
+          {{- with .args }}
+          args: {{ toYaml . | nindent 13 }}
+          {{- end }}
+          {{- with .environment}}
+          env: {{ tpl (toYaml . ) $ | nindent 13 }}
+          {{- end }}
+          ports:
+          {{- range .services | default (list (dict "port" 8080 "name" "http")) }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+              protocol: TCP
+          {{- end }}
+          {{- if $isDataApp }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            {{- with .livenessProbe }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            {{- with .startupProbe }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- else }}
+          {{- with .livenessProbe }}
+          livenessProbe: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .startupProbe }}
+          startupProbe: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
+          {{- if $hasVolumes }}
+          volumeMounts:
+          {{- end }}
+          {{- if $isDataApp }}
+          - name: {{ template "tsg-connector.fullname" $ }}-{{ .name }}-config
+            mountPath: /app/resources
+          {{- end }}
+          {{- if .secrets }}
+          {{- range .secrets }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+          {{- end }}
+          {{- end }}
+          {{- if .configMaps }}
+          {{- range .configMaps }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+          {{- end }}
+          {{- end }}
+          {{- if .persistentVolume }}
+          - name: {{ .persistentVolume.name }}
+            mountPath: {{ .persistentVolume.mountPath }}
+          {{- end}}
+          {{- if .hostPath }}
+          - name: {{ .hostPath.name }}
+            mountPath: {{ .hostPath.mountPath }}
+          {{- end }}
+          {{- if .tty }}
+          tty: true
+          {{- end }}
+      {{- if $hasVolumes }}
+      volumes:
+      {{- end }}
+      {{- if $isDataApp }}
+      - name: {{ template "tsg-connector.fullname" $ }}-{{ .name }}-config
+        configMap:
+          name: {{ template "tsg-connector.fullname" $ }}-{{ .name }}-config
+      {{- end }}
+      {{- if .secrets }}
+      {{- range .secrets }}
+      - name: {{ .name }}
+        secret:
+          secretName: {{ .name }}
+      {{- end }}
+      {{- end }}
+      {{- if .configMaps }}
+      {{- range .configMaps }}
+      - name: {{ .name }}
+        configMap:
+          name: {{ .name }}
+      {{- end }}
+      {{- end }}
+      {{- if .persistentVolume }}
+      - name: {{ .persistentVolume.name }}
+      {{- if .persistentVolume.azureFile }}
+        azureFile: {{- toYaml .persistentVolume.azureFile | nindent 10 }}
+        {{- else if .azureDisk }}
+        azureDisk: {{- toYaml .persistentVolume.azureDisk | nindent 10 }}
+        {{- else }}
+        persistentVolumeClaim:
+          claimName: {{ .persistentVolume.name }}
+      {{- end }}
+      {{- end }}
+      {{- if .hostPath }}
+      - name: {{ .hostPath.name }}
+        hostPath:
+          path: {{ .hostPath.path }}
+          type: DirectoryOrCreate
+      {{- end }}
+      {{- with .tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+{{- end }}

@@ -1,0 +1,52 @@
+{{- if .Values.coreContainer }}
+  {{- with .Values.coreContainer.apiIngress }}
+    {{- if .enabled }}
+      {{- with $.Values.coreContainer.ingress }}
+{{- if $.Values.useNewIngress }}
+apiVersion: networking.k8s.io/v1
+{{- else }}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ template "tsg-connector.fullname" $ }}-core-container-api
+  labels: {{ include "tsg-connector.labels" $ | nindent 4 }}
+  annotations:
+    {{- with $.Values.deployment.annotations }}
+    {{- tpl (toYaml . ) $ | nindent 4 }}
+    {{- end }}
+    {{- with .annotations }}
+    {{- tpl (toYaml . ) $ | nindent 4 }}
+    {{- end }}
+    kubernetes.io/ingress.class: nginx
+    {{- if .clusterIssuer }}
+    cert-manager.io/cluster-issuer: {{ .clusterIssuer }}
+    {{- end }}
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+spec:
+  tls:
+  - hosts:
+    - {{ .host | default $.Values.host }}
+    secretName: {{ .secretName | default (printf "%s-tls-secret" (.host | default $.Values.host)) }}
+  rules:
+  - host: {{ .host | default $.Values.host }}
+    http:
+      paths:
+{{- if $.Values.useNewIngress }}
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ template "tsg-connector.fullname" $ }}
+            port:
+              number: 8082
+{{- else }}
+      - backend:
+          serviceName: {{ template "tsg-connector.fullname" $ }}
+          servicePort: 8082
+        path: /api
+{{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{ end -}}

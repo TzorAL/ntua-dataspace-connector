@@ -1,0 +1,143 @@
+# -- Default host for ingress resources
+host: enershare.epu.ntua.gr # CHANGE
+
+# # Uncomment for deployments on Kubernetes clusters with versions <v1.19
+# useNewIngress: false
+
+coreContainer:
+  # -- Replicas as specified in the core container deployment
+  # -- Core Container docker image name
+  image: docker.nexus.dataspac.es/core-container:feature-open-sourcing
+  # Ingress Service configuration
+  ingress:
+    # -- Ingress path
+    path: /(.*)
+    # -- (Optional) Ingress rewrite target
+    rewriteTarget: /$1
+    # -- (Optional) Ingress clusterIssuer for automatic TLS certificate request by Cert Manager
+    clusterIssuer: lets-encrypt
+    # -- (Optional) Ingress secretName containing TLS details, by default the hostname appended with "-tls" will be used
+    # secretName:
+    # -- (Optional) Ingress host override
+    # host: enershare.epu.ntua.gr
+    # -- (Optional) Ingress additional annotations
+    annotations: {}
+
+adminUi:
+  # -- Toggle for enabling the Core Container Administration UI
+  enabled: true
+  # -- Docker image to use for the UI
+  image: docker.nexus.dataspac.es/ui/core-container-ui:master
+  ingress:
+    # -- Ingress path
+    path: /ui/(.*)
+    # -- (Optional) Ingress rewrite target
+    rewriteTarget: /$1
+    # -- (Optional) Ingress clusterIssuer for automatic TLS certificate request by Cert Manager
+    clusterIssuer: lets-encrypt
+    # -- (Optional) Ingress secretName containing TLS details, by default the hostname appended with "-tls" will be used
+    # secretName:
+    # -- (Optional) Ingress host override
+    # host: connector-cc.domain.com
+    # -- (Optional) Ingress additional annotations
+    annotations: {}
+
+# IDS Core Container configuration
+ids:
+  # Generic information on the IDS connector for usage in the Self Description that will be shared with the Broker
+  info:
+    # -- IDS Component Identity (URI based identifier)
+    idsid: urn:ids:enershare:connectors:NTUA-Test-Connector # CHANGE
+    # -- IDS Participant Identity, aimed at the participant that is responsible for the contents of the connector (URI based identifier)
+    curator: urn:ids:enershare:participants:NTUA # CHANGE
+    # -- IDS Participant Identity, aimed at the participant that is responsible for the technical side of the connector (URI based identifier)
+    maintainer: urn:ids:enershare:participants:NTUA # CHANGE
+    # -- Title of the Connector
+    titles:
+      - Playground Local Demo Connector@en
+    # -- Description of the Connector
+    descriptions:
+      - Playground Local Demo Connector@en
+    # -- Publicly accessible access URL(s) of the Connector
+    accessUrl:
+      - https://{{ .Values.host }}/router
+
+  # Core Container API Security for data apps (API Keys) and admin UI (user credentials)
+  security:
+    # API User Configuration
+    apiKeys:
+      - id: default
+        key: APIKEY-4DVuWn93ijEo5ZucLgiR # CHANGE ?????????????????????????
+        roles:
+          - DATA_APP
+          - PEF_MANAGER
+    users:
+      - # -- User identifier (also used as username for the user)
+        id: admin
+        # -- BCrypt encoded password (defaults to: playground)
+        password: $2a$12$q0rBD9B7C8Xuj9V/tLb0xOnJuX2v9cll6AqBoO4oOybCsGDPVfpf6
+        # -- User role assignments
+        roles:
+          - ADMIN
+
+  # Dynamic Attribute Provisioning Service (DAPS) configuration
+  daps:
+    # -- Dynamic Attribute Provisioning Service URL
+    url: https://daps.playground.dataspac.es/v2
+
+  # Broker Configuration
+  broker:
+    # -- Broker IDS Identifier
+    id: urn:playground:tsg:connectors:MetadataBroker
+    # -- Broker Access URL
+    address: https://broker.playground.dataspac.es/infrastructure
+    autoRegister: false
+
+  # Orchestration Manager configuration
+  orchestrationManagerConfig:
+    # -- Enable Kubernetes orchestration (auto-configuring when deployed in a Kubernetes environment)
+    enableKubernetes: false
+# Uncomment the block below to enable the OpenAPI data app
+containers:
+  - # -- Container Type. Either `data-app` (for data-app containers healthchecks and configuration are configured out of the box) or `helper`
+    type: data-app
+    # -- Container Name
+    name: openapi-data-app
+    # -- Container Image (including tag)
+    image: docker.nexus.dataspac.es/data-apps/openapi-data-app:feature-infomodel-4.2.7
+    # -- Core Container API Key
+    apiKey: APIKEY-4DVuWn93ijEo5ZucLgiR # CHANGE
+    services: # ADDED
+    - port: 80
+      name: http
+      ingress:
+        path: /openapiconsumer/(.*) # Difference
+        rewriteTarget: /$1
+    config:
+      # -- OpenAPI Data App configuration
+      openApi:
+        usePolicyEnforcement: false
+        openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/I814/httpbin/
+        versions:
+        - 0.9.2
+  - type: helper
+    image: docker.nexus.dataspac.es/data-apps/openapi-data-app-consumer:master
+    name: httpbin-ui
+    services:
+      - port: 80
+        name: http
+        ingress:
+          path: /openapi-consumer/(.*)
+          rewriteTarget: /$1
+
+    environment:
+    - name: FORWARD_TO
+      value: urn:ids:enershare:connectors:NTUA-Test-Connector:agentA # CHANGED
+    - name: FORWARD_SENDER
+      value: urn:ids:enershare:participants:NTUA # CHANGED
+    - name: FORWARD_RECIPIENT
+      value: urn:playground:tsg:connectors:TestConsumer:AgentA # CHANGED
+    - name: FORWARD_ACCESSURL
+      value: https://test-connector.playground.dataspac.es/router
+    - name: API_BACKEND
+      value: http://{{ template "tsg-connector.fullname" $ }}-openapi-data-app-http:8080/openapi/0.9.2/
