@@ -26,9 +26,10 @@ For our implementation, it is necessary to install the [microk8s](https://microk
 
 2. Ensure which ports are already opened in your current working enviroment using:
     ```bash
-    sudo ufw enable # enable firewall
-    sudo ufw disable # completely disable firewall
     sudo ufw status numbered # check port status (when firewall is enabled)
+    # Optionally, for a simple implementation, you can lower the firewall and enable it again once all components are configured
+    sudo ufw disable # completely disable firewall
+    sudo ufw enable # enable firewall
     ```
 
 3. **Enable ingress addon:** An ingress controller acts as a reverse proxy and load balancer. It adds a layer of abstraction to traffic routing, accepting traffic from outside the Kubernetes platform and load balancing it to Pods running inside the platform
@@ -123,7 +124,7 @@ Apply `cluster-issuer.yaml` file provided using:
             tsg-connector
     ```
 
-The default data app should appear at: https://domain-name/data-app/ (forward slash at the end is necessary - not for show :))
+The default data app should appear at: `https://domain-name/data-app/` (forward slash at the end is necessary - not for show :))
 
 # Clean-up
 To delete the connector and remove all related resources:
