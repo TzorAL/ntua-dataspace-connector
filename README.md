@@ -70,7 +70,15 @@ Apply `cluster-issuer.yaml` file provided using:
 
 1. Configure the Helm Chart: create a `values.ntua.yaml` file with the modifications to the configuration.
 
-    Please refer to the official TSG gitlab [page](https://gitlab.com/tno-tsg/helm-charts/connector/-/blob/master/README.md?ref_type=heads) for further information with regards to the configuration. In this guide, it is assumed that you have followed the instructions to become a participant in the dataspace provided as well as create your connector credentials in the [tsg playground](https://daps.playground.dataspac.es/#home) or [enershare](https://daps.enershare.dataspac.es/#home) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.ntua.yaml` respectively)
+    Please refer to the official TSG gitlab [page](https://gitlab.com/tno-tsg/helm-charts/connector/-/blob/master/README.md?ref_type=heads) for further information with regards to the configuration. In this guide, it is assumed that you have followed the instructions to become a participant in the dataspace provided as well as create your connector credentials in the [tsg playground](https://daps.playground.dataspac.es/#home) or [enershare](https://daps.enershare.dataspac.es/#home) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.ntua.yaml` respectively). At the end of this step, a participant and connector (with appropriate IDs) should be registered and the following files should be place in the directory of your connector:  
+    ```bash
+    ├── cachain.crt     # certificate authority key
+    ├── component.crt   # connector id certificate
+    ├── component.key   # connector id key
+    ├── participant.crt # participant/organization id certificate
+    └── participant.key # participant/organization id key
+    ```
+    
     The minimal configuration required to get your first deployment running, without data apps and ingresses, is as follows:
     
     - Modify `host` to the domain name you configured with the ingress controller:
@@ -92,20 +100,20 @@ Apply `cluster-issuer.yaml` file provided using:
               - https://CONNECTOR_ACCESS_URL/router
         ```
 
-2. Create IDS Identity secret: Cert-manager stores TLS certificates as Kubernetes secrets, making them easily accessible to your applications. When certificates are renewed, the updated certificates are automatically stored in the corresponding secrets. Create an Kubernetes secret containing the certificates acquired from identity creation.
+3. Create IDS Identity secret: Cert-manager stores TLS certificates as Kubernetes secrets, making them easily accessible to your applications. When certificates are renewed, the updated certificates are automatically stored in the corresponding secrets. Create an Kubernetes secret containing the certificates acquired from identity creation.
     ```bash
     microk8s kubectl create secret generic ids-identity-secret --from-file=ids.crt=./component.crt \
                                                                --from-file=ids.key=./component.key \
                                                                --from-file=ca.crt=./cachain.crt 
     ```
 
-3. Add the Helm repository of the TSG components:
+4. Add the Helm repository of the TSG components:
     ```bash
     helm repo add tsg https://nexus.dataspac.es/repository/tsg-helm
     helm repo update
     ```
 
-4. To install the Helm chart, execute:
+5. To install the Helm chart, execute:
     ```bash
     microk8s helm upgrade --install \
             --repo https://nexus.dataspac.es/repository/tsg-helm \
