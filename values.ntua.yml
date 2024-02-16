@@ -1,7 +1,12 @@
 host: enershare.epu.ntua.gr
 
 coreContainer:
-  image: docker.nexus.dataspac.es/core-container:1.1.1
+  image: docker.nexus.dataspac.es/core-container:1.2.0
+  environment:
+  - name: ENABLE_OCSP
+    value: "false"
+  - name: ENABLE_CRL
+    value: "false"
   ingress:
     path: /(.*)
     rewriteTarget: /$1
@@ -27,6 +32,13 @@ ids:
     accessUrl:
       - https://{{ .Values.host }}/router
 
+  routes:
+    ingress:
+      http:
+        - dataApp: http://{{ template "tsg-connector.fullname" . }}-openapi-data-app-http:8080/router
+          endpoint: router
+          parameters: "&matchOnUriPrefix=true"
+  
   security:
     apiKeys:
       - id: default
@@ -58,8 +70,13 @@ containers:
       openApi:
         usePolicyEnforcement: false
         agents:
-          - id: urn:ids:enershare:connectors:NTUA:Consumer:ConsumerAgent
-            title: NTUA Meter Consumer Agent
+          - id: urn:ids:enershare:connectors:NTUA:Consumer:ProviderAgent
+            backEndUrlMapping:
+              0.5: http://postgrest-service:8886
+            title: Swagger API
+            openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/enershare_ntua/enershare-postgREST/
+            versions:
+            - 0.5
     services:
       - port: 8080
         name: http
