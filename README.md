@@ -117,8 +117,9 @@ Apply `cluster-issuer.yaml` file provided using:
 5. To install the Helm chart, execute:
     ```bash
     microk8s helm upgrade --install \
+            -n default \
             --repo https://nexus.dataspac.es/repository/tsg-helm \
-            --version 3.2.7 \
+            --version 3.2.8 \
             -f values.ntua.yml \
             ntua-connector \
             tsg-connector
