@@ -74,7 +74,7 @@ Apply `cluster-issuer.yaml` file provided using:
 
 1. Configure the Helm Chart: create a `values.ntua.yaml` file with the modifications to the configuration.
 
-    Please refer to the official TSG gitlab [page](https://gitlab.com/tno-tsg/helm-charts/connector/-/blob/master/README.md?ref_type=heads) for further information with regards to the configuration. In this guide, it is assumed that you have followed the instructions to become a participant in the dataspace provided as well as create your connector credentials in the [tsg playground](https://daps.playground.dataspac.es/#home) or [enershare](https://daps.enershare.dataspac.es/#home) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.ntua.yaml` respectively). At the end of this step, a participant and connector (with appropriate IDs) should be registered and the following files should be place in the directory of your connector:  
+    Please refer to the official TSG gitlab [page](https://gitlab.com/tno-tsg/helm-charts/connector/-/blob/master/README.md?ref_type=heads) for further information with regards to the configuration. In this guide, it is assumed that you have followed the instructions to become a participant in the dataspace provided as well as create your connector credentials in the [tsg playground](https://daps.playground.dataspac.es/#home) or [enershare](https://daps.enershare.dataspac.es/#home) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.yaml` respectively). At the end of this step, a participant and connector (with appropriate IDs) should be registered and the following files should be place in the directory of your connector:  
     ```bash
     ├── cachain.crt     # certificate authority key
     ├── component.crt   # connector id certificate
@@ -82,7 +82,10 @@ Apply `cluster-issuer.yaml` file provided using:
     ├── participant.crt # participant/organization id certificate
     └── participant.key # participant/organization id key
     ```
-    
+    Additionally, when deploying APIs through the connector, it is important that you have uploaded its openAPI doc in [SwaggerHub](https://app.swaggerhub.com/home). Its link to the swaggerHub will fill the `openApiBaseUrl` field in `values.yaml` file.
+    It is important to note that in order to retrieve the API spec for the data app, the URL used in the config should be the `/apiproxy/registry/` variant instead of the `/apis/` link from Swagger hub.
+    Please pay close attention to the relevant example code snippet in the respective segment 
+   
     The minimal configuration required to get your first deployment running, without data apps and ingresses, is as follows:
     
     - Modify `host` to the domain name you configured with the ingress controller:
@@ -103,7 +106,18 @@ Apply `cluster-issuer.yaml` file provided using:
             accessUrl:
               - https://CONNECTOR_ACCESS_URL/router
         ```
-
+    - Modify fields in the `agents` tab: Keep in mind that `API-version` is the version number you have used for your API when you uploaded in swaggerhub:
+      
+      ```yaml
+      agents:
+          - id: {IDS_COMPONENT_ID}:AgentA # custom agent defined by user
+            backEndUrlMapping:
+              {API-version}: http://{service-name}:{internal-service-port}
+            title: SERVICE TITLE
+            openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/{USERNAME}/{API-NAME}/
+            versions: 
+            - {API-version}
+      ```
 3. Create IDS Identity secret: Cert-manager stores TLS certificates as Kubernetes secrets, making them easily accessible to your applications. When certificates are renewed, the updated certificates are automatically stored in the corresponding secrets. Create an Kubernetes secret containing the certificates acquired from identity creation.
     ```bash
     microk8s kubectl create secret generic ids-identity-secret --from-file=ids.crt=./component.crt \
