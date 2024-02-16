@@ -4,10 +4,20 @@ This repository contains the Helm Chart for the [TSG IDS Connector](https://gitl
 It is the basis for deploying and configuring the components related to the connector (core container, administration UI, and data apps).
 
 # Requirements
-For our implementation, it is necessary to install the [microk8s](https://microk8s.io/) system. This requires:
-- An Ubuntu 22.04 LTS, 20.04 LTS, 18.04 LTS or 16.04 LTS environment to run the commands (or another operating system which supports snapd - see the snapd documentation)
-- At least 540MB of memory, but to accommodate workloads, it is recommended a system with at least 20G of disk space and 4G of memory.
-- An internet connection
+For our implementation, it is necessary to: 
+- install the [microk8s](https://microk8s.io/) system. This requires:
+    - An Ubuntu 22.04 LTS, 20.04 LTS, 18.04 LTS or 16.04 LTS environment to run the commands (or another operating system which supports snapd - see the snapd documentation)
+    - At least 540MB of memory, but to accommodate workloads, it is recommended a system with at least 20G of disk space and 4G of memory.
+    - An internet connection
+- have uploaded your API's documentation in [SwaggerHub](https://app.swaggerhub.com/home), when deploying APIs through the connector
+- become a participant in a dataspace as well as create your connector credentials in the [tsg playground](https://daps.playground.dataspac.es/#home) or [enershare](https://daps.enershare.dataspac.es/#home) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.yaml` respectively). At the end of this step, a participant and connector (with appropriate IDs) should be registered and the following files should be place in the directory of your connector:  
+    ```bash
+    ├── cachain.crt     # certificate authority key
+    ├── component.crt   # connector id certificate
+    ├── component.key   # connector id key
+    ├── participant.crt # participant/organization id certificate
+    └── participant.key # participant/organization id key
+    ```    
 
 # Prerequisites
 
@@ -74,18 +84,9 @@ Apply `cluster-issuer.yaml` file provided using:
 
 1. Configure the Helm Chart: create a `values.ntua.yaml` file with the modifications to the configuration.
 
-    Please refer to the official TSG gitlab [page](https://gitlab.com/tno-tsg/helm-charts/connector/-/blob/master/README.md?ref_type=heads) for further information with regards to the configuration. In this guide, it is assumed that you have followed the instructions to become a participant in the dataspace provided as well as create your connector credentials in the [tsg playground](https://daps.playground.dataspac.es/#home) or [enershare](https://daps.enershare.dataspac.es/#home) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.yaml` respectively). At the end of this step, a participant and connector (with appropriate IDs) should be registered and the following files should be place in the directory of your connector:  
-    ```bash
-    ├── cachain.crt     # certificate authority key
-    ├── component.crt   # connector id certificate
-    ├── component.key   # connector id key
-    ├── participant.crt # participant/organization id certificate
-    └── participant.key # participant/organization id key
-    ```
-    Additionally, when deploying APIs through the connector, it is important that you have uploaded its openAPI doc in [SwaggerHub](https://app.swaggerhub.com/home). Its link to the swaggerHub will fill the `openApiBaseUrl` field in `values.yaml` file.
-    It is important to note that in order to retrieve the API spec for the data app, the URL used in the config should be the `/apiproxy/registry/` variant instead of the `/apis/` link from Swagger hub.
-    Please pay close attention to the relevant example code snippet in the respective segment 
-   
+    Please refer to the official TSG gitlab [page](https://gitlab.com/tno-tsg/helm-charts/connector/-/blob/master/README.md?ref_type=heads) for further information with regards to the configuration.
+    In this guide, it is assumed that you have followed the instructions in the **Requirements** section
+    
     The minimal configuration required to get your first deployment running, without data apps and ingresses, is as follows:
     
     - Modify `host` to the domain name you configured with the ingress controller:
@@ -106,8 +107,7 @@ Apply `cluster-issuer.yaml` file provided using:
             accessUrl:
               - https://CONNECTOR_ACCESS_URL/router
         ```
-    - Modify fields in the `agents` tab: Keep in mind that `API-version` is the version number you have used for your API when you uploaded in swaggerhub:
-      
+    - Modify fields in the `agents` tab: Keep in mind that `API-version` is the version number you have used for your API when you uploaded in SwaggerHub. It is important to note that in order to retrieve the API spec for the data app, the URL used in the config should be the `/apiproxy/registry/` variant instead of the `/apis/` link from Swagger hub.
       ```yaml
       agents:
           - id: {IDS_COMPONENT_ID}:AgentA # custom agent defined by user
