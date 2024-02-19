@@ -1,4 +1,4 @@
-host: host-name
+host: {host-name}
 
 coreContainer:
   image: docker.nexus.dataspac.es/core-container:1.2.0
