@@ -82,10 +82,10 @@ Apply `cluster-issuer.yaml` file provided using:
 
 # Deployment
 
-1. Configure the Helm Chart: create a `values.ntua.yaml` file with the modifications to the configuration.
+1. Configure the Helm Chart: create a `values.yaml` file with the modifications to the configuration (see `values.ntua.yaml` as an example).
 
-    Please refer to the official TSG gitlab [page](https://gitlab.com/tno-tsg/helm-charts/connector/-/blob/master/README.md?ref_type=heads) for further information with regards to the configuration.
     In this guide, it is assumed that you have followed the instructions in the `Requirements` section
+    Please refer to the official TSG gitlab [page](https://gitlab.com/tno-tsg/helm-charts/connector/-/blob/master/README.md?ref_type=heads) for further information with regards to the configuration.
     
     The minimal configuration required to get your first deployment running, without data apps and ingresses, is as follows:
     
@@ -137,7 +137,7 @@ Apply `cluster-issuer.yaml` file provided using:
             -n NAMESPACE \
             --repo https://nexus.dataspac.es/repository/tsg-helm \
             --version 3.2.8 \
-            -f values.ntua.yml \
+            -f values.yml \
             DEPLOYMENT_NAME \
             tsg-connector
     ```
