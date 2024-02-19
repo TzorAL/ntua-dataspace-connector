@@ -97,9 +97,9 @@ Apply `cluster-issuer.yaml` file provided using:
         ```yaml
         ids:
           info:
-            idsid: IDS_COMPONENT_ID
-            curator: IDS_PARTICIPANT_ID
-            maintainer: IDS_PARTICIPANT_ID
+            idsid: {IDS_COMPONENT_ID}
+            curator: {IDS_PARTICIPANT_ID}
+            maintainer: {IDS_PARTICIPANT_ID}
             titles:
               - CONNECTOR TITLE@en
             descriptions:
@@ -107,16 +107,16 @@ Apply `cluster-issuer.yaml` file provided using:
             accessUrl:
               - https://CONNECTOR_ACCESS_URL/router
         ```
-    - Modify fields in the `agents` tab: Keep in mind that `API-version` is the version number you have used for your API when you uploaded in SwaggerHub. It is important to note that in order to retrieve the API spec for the data app, the URL used in the config should be the `/apiproxy/registry/` variant instead of the `/apis/` link from Swagger hub.
+    - Modify fields in the `agents` tab: Keep in mind that `API-version` is the version number you have used for your API when you uploaded in SwaggerHub (e.g 0.5). It is important to note that in order to retrieve the API spec for the data app, the URL used in the config should be the `/apiproxy/registry/` variant instead of the `/apis/` link from Swagger hub.
       ```yaml
       agents:
           - id: {IDS_COMPONENT_ID}:{AgentName} # custom agent defined by user
             backEndUrlMapping:
-              {API-version}: http://{service-name}:{internal-service-port}
+              {api-version}: http://{service-name}:{internal-service-port}
             title: SERVICE TITLE
-            openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/{USERNAME}/{API-NAME}/
+            openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/{username}/{api-name}/
             versions: 
-            - {API-version}
+            - {api-version}
       ```
 3. Create IDS Identity secret: Cert-manager stores TLS certificates as Kubernetes secrets, making them easily accessible to your applications. When certificates are renewed, the updated certificates are automatically stored in the corresponding secrets. Create an Kubernetes secret containing the certificates acquired from identity creation.
     ```bash
@@ -134,14 +134,14 @@ Apply `cluster-issuer.yaml` file provided using:
 5. To install the Helm chart, execute:
     ```bash
     microk8s helm upgrade --install \
-            -n NAMESPACE \
+            -n {namespace} \
             --repo https://nexus.dataspac.es/repository/tsg-helm \
             --version 3.2.8 \
             -f values.yaml \
-            DEPLOYMENT_NAME \
+            {deployment_name} \
             tsg-connector
     ```
-    please update the NAMESPACE (e.g default) and DEPLOYMENT_NAME (e.g my-connector) fields
+    please update the `namespace` (e.g default) and `deployment_name` (e.g my-connector) fields
     
 The default data app should appear at: `https://{domain-name}/data-app/` (forward slash at the end is necessary - not for show :))
 
