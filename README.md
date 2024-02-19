@@ -138,7 +138,7 @@ Apply `cluster-issuer.yaml` file provided using:
             {deployment-name} \
             tsg-connector
     ```
-    please update the `namespace` (e.g default) and `deployment-name` (e.g my-connector) fields
+    please update to appropriate names the `namespace` (e.g default) and `deployment-name` (e.g my-connector) fields
     
 The default data app should appear at: `https://{domain-name}/data-app/` (forward slash at the end is necessary - not for show :))
 
