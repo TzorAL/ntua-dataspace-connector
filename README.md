@@ -38,8 +38,8 @@ For our implementation, it is necessary to:
     ```bash
     sudo ufw status numbered # check port status (when firewall is enabled)
     # Optionally, for a simple implementation, you can lower the firewall and enable it again once all components are configured
-    sudo ufw disable # completely disable firewall
-    sudo ufw enable # enable firewall
+    # sudo ufw disable # completely disable firewall
+    # sudo ufw enable # enable firewall
     ```
 
 3. **Enable ingress addon:** An ingress controller acts as a reverse proxy and load balancer. It adds a layer of abstraction to traffic routing, accepting traffic from outside the Kubernetes platform and load balancing it to Pods running inside the platform
