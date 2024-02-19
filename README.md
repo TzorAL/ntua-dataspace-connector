@@ -71,7 +71,7 @@ Apply `cluster-issuer.yaml` file provided using:
     # This returns VM's public IP address in ipv4 (e.g 147.102.6.27)
     curl -4 ifconfig.co 
     # Display the resolved IP address associated with the domain name. See if it matches output of VM's public IP address
-    nslookup domain-name
+    nslookup {domain-name}
     ```
 
 7. Ensure dns ports (53/9153) are available:
@@ -91,7 +91,7 @@ Apply `cluster-issuer.yaml` file provided using:
     
     - Modify `host` to the domain name you configured with the ingress controller:
         ```yaml
-        host: domain-name
+        host: {domain-name}
         ```
     - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.ntua.yaml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID.
         ```yaml
@@ -143,7 +143,7 @@ Apply `cluster-issuer.yaml` file provided using:
     ```
     please update the NAMESPACE (e.g default) and DEPLOYMENT_NAME (e.g my-connector) fields
     
-The default data app should appear at: `https://domain-name/data-app/` (forward slash at the end is necessary - not for show :))
+The default data app should appear at: `https://{domain-name}/data-app/` (forward slash at the end is necessary - not for show :))
 
 # Clean-up
 To delete the connector and remove all related resources:
