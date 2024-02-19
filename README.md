@@ -107,7 +107,7 @@ Apply `cluster-issuer.yaml` file provided using:
             accessUrl:
               - https://CONNECTOR_ACCESS_URL/router
         ```
-    - Modify fields in the `agents` tab: Keep in mind that `API-version` is the version number you have used for your API when you uploaded in SwaggerHub (e.g 0.5). It is important to note that in order to retrieve the API spec for the data app, the URL used in the config should be the `/apiproxy/registry/` variant instead of the `/apis/` link from Swagger hub.
+    - Modify fields in the `agents` tab: Keep in mind that `api-version` is the version number you have used for your API when you uploaded in SwaggerHub (e.g 0.5). It is important to note that in order to retrieve the API spec for the data app, the URL used in the config should be the `/apiproxy/registry/` variant instead of the `/apis/` link from Swagger hub.
       ```yaml
       agents:
           - id: {IDS_COMPONENT_ID}:{AgentName} # custom agent defined by user
@@ -138,10 +138,10 @@ Apply `cluster-issuer.yaml` file provided using:
             --repo https://nexus.dataspac.es/repository/tsg-helm \
             --version 3.2.8 \
             -f values.yaml \
-            {deployment_name} \
+            {deployment-name} \
             tsg-connector
     ```
-    please update the `namespace` (e.g default) and `deployment_name` (e.g my-connector) fields
+    please update the `namespace` (e.g default) and `deployment-name` (e.g my-connector) fields
     
 The default data app should appear at: `https://{domain-name}/data-app/` (forward slash at the end is necessary - not for show :))
 
@@ -150,5 +150,5 @@ To delete the connector and remove all related resources:
 ```bash
 microk8s kubectl delete clusterissuer lets-encrypt
 microk8s kubectl delete secret/ids-identity-secret
-microk8s helm uninstall DEPLOYMENT_NAME -n default
+microk8s helm uninstall {deployment-name} -n default
 ```
