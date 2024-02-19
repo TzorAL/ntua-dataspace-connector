@@ -22,9 +22,9 @@ adminUi:
 
 ids:
   info:
-    idsid: IDS_COMPONENT_ID
-    curator: IDS_PARTICIPANT_ID
-    maintainer: IDS_PARTICIPANT_ID
+    idsid: {IDS_COMPONENT_ID}
+    curator: {IDS_PARTICIPANT_ID}
+    maintainer: {IDS_PARTICIPANT_ID}
     titles:
       - CONNECTOR TITLE@en
     descriptions:
@@ -68,15 +68,15 @@ containers:
     apiKey: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE # CHANGE (also at line 32)
     config:
       openApi:
-        usePolicyEnforcement: false
+        usePolicyEnforcement: false  
         agents:
-          - id: {IDS_COMPONENT_ID}:AgentA # custom agent defined by user
-            backEndUrlMapping:
-              {API-version}: http://{service-name}:{internal-service-port}
-            title: SERVICE TITLE
-            openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/{USERNAME}/{API-NAME}/
-            versions: 
-            - {API-version}    
+            - id: {IDS_COMPONENT_ID}:{AgentName} # custom agent defined by user
+              backEndUrlMapping:
+                {api-version}: http://{service-name}:{internal-service-port}
+              title: SERVICE TITLE
+              openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/{username}/{api-name}/
+              versions: 
+              - {api-version}            
     services:
       - port: 8080
         name: http
