@@ -147,5 +147,5 @@ To delete the connector and remove all related resources:
 ```bash
 microk8s kubectl delete clusterissuer lets-encrypt
 microk8s kubectl delete secret/ids-identity-secret
-microk8s helm uninstall {deployment-name} -n default
+microk8s helm uninstall {deployment-name} -n {namespace}
 ```
