@@ -93,7 +93,7 @@ Apply `cluster-issuer.yaml` file provided using:
         ```yaml
         host: {domain-name}
         ```
-    - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.ntua.yaml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID.
+    - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.ntua.yml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID.
         ```yaml
         ids:
           info:
@@ -110,7 +110,7 @@ Apply `cluster-issuer.yaml` file provided using:
     - Modify fields in the `agents` tab: Keep in mind that `API-version` is the version number you have used for your API when you uploaded in SwaggerHub. It is important to note that in order to retrieve the API spec for the data app, the URL used in the config should be the `/apiproxy/registry/` variant instead of the `/apis/` link from Swagger hub.
       ```yaml
       agents:
-          - id: {IDS_COMPONENT_ID}:AgentA # custom agent defined by user
+          - id: {IDS_COMPONENT_ID}:{AgentName} # custom agent defined by user
             backEndUrlMapping:
               {API-version}: http://{service-name}:{internal-service-port}
             title: SERVICE TITLE
