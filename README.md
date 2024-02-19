@@ -134,14 +134,15 @@ Apply `cluster-issuer.yaml` file provided using:
 5. To install the Helm chart, execute:
     ```bash
     microk8s helm upgrade --install \
-            -n default \
+            -n NAMESPACE \
             --repo https://nexus.dataspac.es/repository/tsg-helm \
             --version 3.2.8 \
             -f values.ntua.yml \
-            ntua-connector \
+            DEPLOYMENT_NAME \
             tsg-connector
     ```
-
+    please update the NAMESPACE (e.g default) and DEPLOYMENT_NAME (e.g my-connector) fields
+    
 The default data app should appear at: `https://domain-name/data-app/` (forward slash at the end is necessary - not for show :))
 
 # Clean-up
@@ -149,5 +150,5 @@ To delete the connector and remove all related resources:
 ```bash
 microk8s kubectl delete clusterissuer lets-encrypt
 microk8s kubectl delete secret/ids-identity-secret
-microk8s helm uninstall ntua-connector -n default
+microk8s helm uninstall DEPLOYMENT_NAME -n default
 ```
