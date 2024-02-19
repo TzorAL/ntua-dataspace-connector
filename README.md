@@ -137,7 +137,7 @@ Apply `cluster-issuer.yaml` file provided using:
             -n NAMESPACE \
             --repo https://nexus.dataspac.es/repository/tsg-helm \
             --version 3.2.8 \
-            -f values.yml \
+            -f values.yaml \
             DEPLOYMENT_NAME \
             tsg-connector
     ```
