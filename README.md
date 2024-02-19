@@ -1,6 +1,6 @@
-# TSG/NTUA Connector Helm Chart
+# TSG/NTUA Connector
 
-This repository contains the Helm Chart for the [TSG IDS Connector](https://gitlab.com/tno-tsg/helm-charts/connector) customized to the specifications of NTUA as part of the Enershare project. 
+This repository contains the installation instructions for the [TSG IDS Connector](https://gitlab.com/tno-tsg/helm-charts/connector) customized to the specifications of NTUA as part of the Enershare project. 
 It is the basis for deploying and configuring the components related to the connector (core container, administration UI, and data apps).
 
 # Requirements
