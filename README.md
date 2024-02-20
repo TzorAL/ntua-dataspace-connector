@@ -10,7 +10,7 @@ For our implementation, it is necessary to:
     - At least 540MB of memory, but to accommodate workloads, it is recommended a system with at least 20G of disk space and 4G of memory.
     - An internet connection
 - have uploaded your API's documentation in [SwaggerHub](https://app.swaggerhub.com/home), when deploying APIs through the connector
-- become a participant in a dataspace as well as create your connector credentials in the [tsg playground](https://daps.playground.dataspac.es/#home) or [enershare](https://daps.enershare.dataspac.es/#home) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.yaml` respectively). At the end of this step, a participant and connector (with appropriate IDs) should be registered and the following files should be place in the directory of your connector:  
+- become a participant in a dataspace as well as create your connector credentials in the [TSG playground](https://daps.playground.dataspac.es/#home) or [Εnershare](https://daps.enershare.dataspac.es/#home) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.yaml` respectively). At the end of this step, a participant and connector (with appropriate IDs) should be registered and the following files should be place in the directory of your connector:  
     ```bash
     ├── cachain.crt     # certificate authority key
     ├── component.crt   # connector id certificate
