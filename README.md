@@ -3,7 +3,7 @@
 This repository contains the installation instructions for the [TSG IDS Connector](https://gitlab.com/tno-tsg/helm-charts/connector) customized to the specifications of NTUA as part of the Enershare project. 
 It is the basis for deploying and configuring the components related to the connector (core container, administration UI, and data apps).
 
-# Requirements
+## Requirements
 For our implementation, it is necessary to: 
 - install the [microk8s](https://microk8s.io/) system. This requires:
     - An Ubuntu 22.04 LTS, 20.04 LTS, 18.04 LTS or 16.04 LTS environment to run the commands (or another operating system which supports snapd - see the snapd documentation)
@@ -19,7 +19,7 @@ For our implementation, it is necessary to:
     └── participant.key # participant/organization id key
     ```    
 
-# Prerequisites
+## Prerequisites
 
 1. **Install microk8s system using `snap`:** We use microk8s since it provides easy installation for many important compoments for the connector (kubectl, helm, ingress, cert-manager)
 
@@ -77,7 +77,7 @@ Apply `cluster-issuer.yaml` file provided using:
     sudo ufw allow 53
     ```
 
-# Deployment
+## Deployment
 
 1. Configure the Helm Chart: update the `values.yaml` file with the modifications to the configuration (see `values.ntua.yml` as an example).
 
@@ -142,7 +142,7 @@ Apply `cluster-issuer.yaml` file provided using:
     
 The default data app should appear at: `https://{domain-name}/data-app/` (forward slash at the end is necessary - not for show :))
 
-# Clean-up
+## Clean-up
 To delete the connector and remove all related resources:
 ```bash
 microk8s kubectl delete clusterissuer lets-encrypt
