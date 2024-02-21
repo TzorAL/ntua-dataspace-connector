@@ -12,7 +12,7 @@ Install the [microk8s](https://microk8s.io/) system. This requires:
 - At least 540MB of memory, but to accommodate workloads, it is recommended a system with at least 20G of disk space and 4G of memory.
 - An internet connection
 
-See more details regarding its configuration in the [prerequisites](#prerequisites) section
+See more details regarding its configuration in the [Prerequisites](#prerequisites) section
 
 ### 2. Request dataspace certificates
 
