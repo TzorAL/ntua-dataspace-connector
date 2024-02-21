@@ -98,7 +98,7 @@ Apply `cluster-issuer.yaml` file provided using:
     sudo microk8s enable helm
    ```
 
-# Deployment
+## Deployment
 
 1. Configure the Helm Chart: update the `values.yaml` file with the modifications to the configuration (see `values.ntua.yml` as an example).
 
