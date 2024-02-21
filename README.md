@@ -93,6 +93,10 @@ Apply `cluster-issuer.yaml` file provided using:
     sudo ufw allow 9153 
     sudo ufw allow 53
     ```
+8. **Enable Helm addon:** [Helm](https://helm.sh/docs/intro/using_helm/) is a package manager software for Kubernetes applications. If not installed by default when initializing microk8s cluster, enable it manually:
+   ```bash
+    sudo microk8s enable helm
+   ```
 
 # Deployment
 
