@@ -8,7 +8,7 @@ It is the basis for deploying and configuring the components related to the conn
 ### 1. Setup deployment environment.
 
 Install the [microk8s](https://microk8s.io/) system. This requires:
-- An Ubuntu 22.04 LTS, 20.04 LTS, 18.04 LTS or 16.04 LTS environment to run the commands (or another operating system which supports snapd      - see the snapd documentation)
+- An Ubuntu 22.04 LTS, 20.04 LTS, 18.04 LTS or 16.04 LTS environment to run the commands (or another operating system which supports snapd - see the snapd documentation)
 - At least 540MB of memory, but to accommodate workloads, it is recommended a system with at least 20G of disk space and 4G of memory.
 - An internet connection
 
@@ -18,8 +18,8 @@ See more details regarding its configuration in the [Prerequisites](#prerequisit
 
 You nee to become a participant in a dataspace as well as create your connector credentials in the [Εnershare](https://daps.enershare.dataspac.es/#home) (or [TSG Playground](https://daps.playground.dataspac.es/#management)) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.yaml` respectively). 
 1. Create an account at the Enershare Identity Provider
-2. Go to the sub-tab Participants within the Management tab. And request a Participant certificate via the button at the bottom of the page. You can choose your own participant ID, our suggestion is to use an identifier in the form of `urn:ids:enershare:participants:ORGANISATION_NAME` (where spaces can be replaced with hypens). You can either choose to create a private key and certificate signing request via the OpenSSL CLI or use the form under "Create private key in browser". When using the form to generate the private key, ensure you download it, since it won't be stored anywhere by default.
-3. Go to the sub-tab Connectors withing the Management tab. And request a Connector certificate. The process is similar to the Participant certificate, but it requires a participant certificate. For the connector ID, our suggestion is to use an identifier in the form of `urn:ids:enershare:connectors:ORGANISATION_NAME:CONNECTOR_NAME` (where spaces can be replaced with hyphens). The connector name can be a human readable name for the connector. 
+2. Go to the sub-tab `Participants` within the `Management` tab and `request a Participant certificate` via the button at the bottom of the page. You can choose your own participant ID, our suggestion is to use an identifier in the form of `urn:ids:enershare:participants:ORGANISATION_NAME` (where spaces can be replaced with hypens). You can either choose to create a private key and certificate signing request via the OpenSSL CLI or use the form under `Create private key in browser`. When using the form to generate the private key, ensure you download it, since it won't be stored anywhere by default.
+3. Go to the sub-tab `Connectors` withing the `Management` tab and `request a Connector certificate` via the button at the bottom of the page. The process is similar to the Participant certificate, but it requires a participant certificate. For the connector ID, our suggestion is to use an identifier in the form of `urn:ids:enershare:connectors:ORGANISATION_NAME:CONNECTOR_NAME` (where spaces can be replaced with hyphens). The connector name can be a human readable name for the connector. 
 
 At the end of this step, a participant and connector (with appropriate IDs) should be registered and the following files should be place in the directory of your connector:  
 ```bash
@@ -119,9 +119,9 @@ Apply `cluster-issuer.yaml` file provided using:
             curator: {IDS_PARTICIPANT_ID}
             maintainer: {IDS_PARTICIPANT_ID}
             titles:
-              - CONNECTOR TITLE@en
+              - {CONNECTOR TITLE@en}
             descriptions:
-              - CONNECTOR DESCRIPTION@en
+              - {CONNECTOR DESCRIPTION@en}
             accessUrl:
               - https://CONNECTOR_ACCESS_URL/router
         ```
@@ -171,10 +171,10 @@ Also, after successful deployment, your connector should be available in the [Me
 ## Usage
 
 In the OpenAPI data app UI:
-2. go to "Tester" and click on "Query"
-3. expand the agent with id `urn:ids:enershare:connectors:MeterDataService:ServiceAgent` and click on "Use". The fields appropriate to said agent are going to be filled
-4. Select a sender agent from the list and provide as path "/powermeters"
-5. This should result in a JSON array of observer Ids.
+1. go to `Tester` and click on `Query`
+2. expand the agent with id `urn:ids:enershare:connectors:MeterDataService:ServiceAgent` and click on `Use`. The fields appropriate to said agent should be filled
+3. Select a sender agent from the list and provide as `path` "/powermeters"
+4. This should result in a JSON array of observer Ids.
 
 ## Clean-up
 
