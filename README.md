@@ -14,7 +14,7 @@ Install the [microk8s](https://microk8s.io/) system. This requires:
 
 ### 2. Request dataspace certificates
 
-You nee to become a participant in a dataspace as well as create your connector credentials in the  [Εnershare](https://daps.enershare.dataspac.es/#home) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.yaml` respectively). 
+You nee to become a participant in a dataspace as well as create your connector credentials in the [Εnershare](https://daps.enershare.dataspac.es/#home) (or [TSG Playground](https://daps.playground.dataspac.es/#management)) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.yaml` respectively). 
 1. Create an account at the Enershare Identity Provider
 2. Go to the sub-tab Participants within the Management tab. And request a Participant certificate via the button at the bottom of the page. You can choose your own participant ID, our suggestion is to use an identifier in the form of `urn:ids:enershare:participants:ORGANISATION_NAME` (where spaces can be replaced with hypens). You can either choose to create a private key and certificate signing request via the OpenSSL CLI or use the form under "Create private key in browser". When using the form to generate the private key, ensure you download it, since it won't be stored anywhere by default.
 3. Go to the sub-tab Connectors withing the Management tab. And request a Connector certificate. The process is similar to the Participant certificate, but it requires a participant certificate. For the connector ID, our suggestion is to use an identifier in the form of `urn:ids:enershare:connectors:ORGANISATION_NAME:CONNECTOR_NAME` (where spaces can be replaced with hyphens). The connector name can be a human readable name for the connector. 
@@ -105,7 +105,7 @@ Apply `cluster-issuer.yaml` file provided using:
         ```yaml
         host: {domain-name}
         ```
-    - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.ntua.yml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID. Change `CONNECTOR TITLE@en`and `CONNECTOR DESCRIPTION@en` to the connector name, and optionally a more descriptive description of your service in the future:
+    - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.ntua.yml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID. Change `titles`and `descriptions` to the connector name, and optionally a more descriptive description of your service in the future:
         ```yaml
         ids:
           info:
