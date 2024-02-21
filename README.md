@@ -111,7 +111,7 @@ Apply `cluster-issuer.yaml` file provided using:
         ```yaml
         host: {domain-name}
         ```
-    - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.ntua.yml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID. Change `titles`and `descriptions` to the connector name, and optionally a more descriptive description of your service in the future:
+    - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.ntua.yml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID. (Optionally) change `titles`and `descriptions` to the connector name, and a more descriptive description of your service in the future:
         ```yaml
         ids:
           info:
@@ -136,7 +136,7 @@ Apply `cluster-issuer.yaml` file provided using:
             versions: 
             - {api-version}
       ```
-    - (Optionally) Modify `apiKey` and `key` fields: Change the bit after `APIKEY-`` to a random API key used for interaction between the core container and the data app.
+    - (Optionally) Modify `apiKey` and `key` fields: Change the bit after ``APIKEY-`` to a random API key used for interaction between the core container and the data app.
     - (Optionally) Modify `password` field: Create your own BCrypt encoded password for the admin user of the connector (also used in the default configuration to secure the ingress of the data app).
     
 3. Create IDS Identity secret: Cert-manager stores TLS certificates as Kubernetes secrets, making them easily accessible to your applications. When certificates are renewed, the updated certificates are automatically stored in the corresponding secrets. Create an Kubernetes secret containing the certificates acquired from identity creation.
@@ -167,7 +167,7 @@ Apply `cluster-issuer.yaml` file provided using:
 The default data app should appear at: `https://{domain-name}/data-app/` (forward slash at the end is necessary - not for show :))
 with the login matching the admin user with the provided BCrypt password.
 Also, after successful deployment, your connector should be available in the [Metadata Broker](https://broker.enershare.dataspac.es/#connectors).
-In the OpenAPI data app UI, go to "Tester" and click on "Query" and expand the agent with id urn:ids:enershare:connectors:MeterDataService:ServiceAgent and click on "Use". Select a sender agent from the list and provide as path "/powermeters". This should result in a JSON array of observer Ids.
+In the OpenAPI data app UI, go to "Tester" and click on "Query" and expand the agent with id `urn:ids:enershare:connectors:MeterDataService:ServiceAgent` and click on "Use". Select a sender agent from the list and provide as path "/powermeters". This should result in a JSON array of observer Ids.
 
 # Clean-up
 To delete the connector and remove all related resources:
