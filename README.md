@@ -1,23 +1,38 @@
-# TSG/NTUA Connector Installation Guide
+# TSG/NTUA Connector Configuration Guide
 
 This repository contains the installation instructions for the [TSG IDS Connector](https://gitlab.com/tno-tsg/helm-charts/connector) customized to the specifications of NTUA as part of the Enershare project. 
-It is the basis for deploying and configuring the components related to the connector (core container, administration UI, and data apps).
+It is the basis for deploying and configuring the components related to the connector (core container, administration UI, and data apps). The guide has been heavily inspired by TSG's [guide](https://gitlab.com/tno-tsg/projects/enershare).
 
 ## Requirements
-For our implementation, it is necessary to: 
-- install the [microk8s](https://microk8s.io/) system. This requires:
-    - An Ubuntu 22.04 LTS, 20.04 LTS, 18.04 LTS or 16.04 LTS environment to run the commands (or another operating system which supports snapd - see the snapd documentation)
-    - At least 540MB of memory, but to accommodate workloads, it is recommended a system with at least 20G of disk space and 4G of memory.
-    - An internet connection
-- have uploaded your API's documentation in [SwaggerHub](https://app.swaggerhub.com/home), when deploying APIs through the connector
-- become a participant in a dataspace as well as create your connector credentials in the [TSG playground](https://daps.playground.dataspac.es/#home) or [Εnershare](https://daps.enershare.dataspac.es/#home) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.yaml` respectively). At the end of this step, a participant and connector (with appropriate IDs) should be registered and the following files should be place in the directory of your connector:  
-    ```bash
-    ├── cachain.crt     # certificate authority key
-    ├── component.crt   # connector id certificate
-    ├── component.key   # connector id key
-    ├── participant.crt # participant/organization id certificate
-    └── participant.key # participant/organization id key
-    ```    
+
+### 1. Setup deployment environment.
+
+Install the [microk8s](https://microk8s.io/) system. This requires:
+- An Ubuntu 22.04 LTS, 20.04 LTS, 18.04 LTS or 16.04 LTS environment to run the commands (or another operating system which supports snapd      - see the snapd documentation)
+- At least 540MB of memory, but to accommodate workloads, it is recommended a system with at least 20G of disk space and 4G of memory.
+- An internet connection
+
+### 2. Request dataspace certificates
+
+You nee to become a participant in a dataspace as well as create your connector credentials in the  [Εnershare](https://daps.enershare.dataspac.es/#home) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.yaml` respectively). 
+1. Create an account at the Enershare Identity Provider
+2. Go to the sub-tab Participants within the Management tab. And request a Participant certificate via the button at the bottom of the page. You can choose your own participant ID, our suggestion is to use an identifier in the form of `urn:ids:enershare:participants:ORGANISATION_NAME` (where spaces can be replaced with hypens). You can either choose to create a private key and certificate signing request via the OpenSSL CLI or use the form under "Create private key in browser". When using the form to generate the private key, ensure you download it, since it won't be stored anywhere by default.
+3. Go to the sub-tab Connectors withing the Management tab. And request a Connector certificate. The process is similar to the Participant certificate, but it requires a participant certificate. For the connector ID, our suggestion is to use an identifier in the form of `urn:ids:enershare:connectors:ORGANISATION_NAME:CONNECTOR_NAME` (where spaces can be replaced with hyphens). The connector name can be a human readable name for the connector. 
+
+At the end of this step, a participant and connector (with appropriate IDs) should be registered and the following files should be place in the directory of your connector:  
+```bash
+├── cachain.crt     # certificate authority key
+├── component.crt   # connector id certificate
+├── component.key   # connector id key
+├── participant.crt # participant/organization id certificate
+└── participant.key # participant/organization id key
+```    
+
+Send a message to Maarten and Willem, or ask during one of the calls, to activate the certificates.
+
+### 3. SwaggerHub 
+
+(For provider connectors) you need to have uploaded your API's documentation in [SwaggerHub](https://app.swaggerhub.com/home), when deploying APIs through the connector. See more details regarding its use in the `Deployment` section 
 
 ## Prerequisites
 
@@ -77,7 +92,7 @@ Apply `cluster-issuer.yaml` file provided using:
     sudo ufw allow 53
     ```
 
-## Deployment
+# Deployment
 
 1. Configure the Helm Chart: update the `values.yaml` file with the modifications to the configuration (see `values.ntua.yml` as an example).
 
@@ -90,7 +105,7 @@ Apply `cluster-issuer.yaml` file provided using:
         ```yaml
         host: {domain-name}
         ```
-    - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.ntua.yml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID.
+    - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.ntua.yml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID. Change `CONNECTOR TITLE@en`and `CONNECTOR DESCRIPTION@en` to the connector name, and optionally a more descriptive description of your service in the future:
         ```yaml
         ids:
           info:
@@ -115,6 +130,9 @@ Apply `cluster-issuer.yaml` file provided using:
             versions: 
             - {api-version}
       ```
+    - (Optionally) Modify `apiKey` and `key` fields: Change the bit after `APIKEY-`` to a random API key used for interaction between the core container and the data app.
+    - (Optionally) Modify `password` field: Create your own BCrypt encoded password for the admin user of the connector (also used in the default configuration to secure the ingress of the data app).
+    
 3. Create IDS Identity secret: Cert-manager stores TLS certificates as Kubernetes secrets, making them easily accessible to your applications. When certificates are renewed, the updated certificates are automatically stored in the corresponding secrets. Create an Kubernetes secret containing the certificates acquired from identity creation.
     ```bash
     microk8s kubectl create secret generic ids-identity-secret --from-file=ids.crt=./component.crt \
@@ -141,8 +159,11 @@ Apply `cluster-issuer.yaml` file provided using:
     please update to appropriate names the `namespace` (e.g default) and `deployment-name` (e.g my-connector) fields
     
 The default data app should appear at: `https://{domain-name}/data-app/` (forward slash at the end is necessary - not for show :))
+with the login matching the admin user with the provided BCrypt password.
+Also, after successful deployment, your connector should be available in the [Metadata Broker](https://broker.enershare.dataspac.es/#connectors).
+In the OpenAPI data app UI, go to "Tester" and click on "Query" and expand the agent with id urn:ids:enershare:connectors:MeterDataService:ServiceAgent and click on "Use". Select a sender agent from the list and provide as path "/powermeters". This should result in a JSON array of observer Ids.
 
-## Clean-up
+# Clean-up
 To delete the connector and remove all related resources:
 ```bash
 microk8s kubectl delete clusterissuer lets-encrypt
