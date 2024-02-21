@@ -163,10 +163,14 @@ Apply `cluster-issuer.yaml` file provided using:
             tsg-connector
     ```
     please update to appropriate names the `namespace` (e.g default) and `deployment-name` (e.g my-connector) fields
-    
+
+## Usage
+
 The default data app should appear at: `https://{domain-name}/data-app/` (forward slash at the end is necessary - not for show :))
 with the login matching the admin user with the provided BCrypt password.
 Also, after successful deployment, your connector should be available in the [Metadata Broker](https://broker.enershare.dataspac.es/#connectors).
+
+### 1. Search Connectors 
 In the OpenAPI data app UI, go to "Tester" and click on "Query" and expand the agent with id `urn:ids:enershare:connectors:MeterDataService:ServiceAgent` and click on "Use". Select a sender agent from the list and provide as path "/powermeters". This should result in a JSON array of observer Ids.
 
 # Clean-up
