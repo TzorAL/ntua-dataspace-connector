@@ -34,7 +34,7 @@ Send a message to Maarten and Willem, or ask during one of the calls, to activat
 
 ### 3. SwaggerHub 
 
-(For provider connectors) you need to have uploaded your API's documentation in [SwaggerHub](https://app.swaggerhub.com/home), when deploying APIs through the connector. See more details regarding its use in the `Deployment` section 
+(For provider connectors) you need to have uploaded your API's documentation in [SwaggerHub](https://app.swaggerhub.com/home), when deploying APIs through the connector. See more details regarding its use in the [Deployment](#deployment) section 
 
 ## Prerequisites
 
