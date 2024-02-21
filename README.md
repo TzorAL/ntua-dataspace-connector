@@ -12,6 +12,8 @@ Install the [microk8s](https://microk8s.io/) system. This requires:
 - At least 540MB of memory, but to accommodate workloads, it is recommended a system with at least 20G of disk space and 4G of memory.
 - An internet connection
 
+See more details regarding its configuration in the [prerequisites](#prerequisites) section
+
 ### 2. Request dataspace certificates
 
 You nee to become a participant in a dataspace as well as create your connector credentials in the [Εnershare](https://daps.enershare.dataspac.es/#home) (or [TSG Playground](https://daps.playground.dataspac.es/#management)) dataspace. This is important to acquire the necessary certificate files and keys, as well as connector/partificant IDs (used in is secrets and `values.yaml` respectively). 
@@ -96,7 +98,7 @@ Apply `cluster-issuer.yaml` file provided using:
 
 1. Configure the Helm Chart: update the `values.yaml` file with the modifications to the configuration (see `values.ntua.yml` as an example).
 
-    In this guide, it is assumed that you have followed the instructions in the `Requirements` section. 
+    In this guide, it is assumed that you have followed the instructions in the [Requirements](#requirements) section. 
     Please refer to the official TSG gitlab [page](https://gitlab.com/tno-tsg/helm-charts/connector/-/blob/master/README.md?ref_type=heads) for further information with regards to the configuration.
     
     The minimal configuration required to get your first deployment running, without data apps and ingresses, is as follows:
