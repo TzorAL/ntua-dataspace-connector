@@ -68,7 +68,10 @@ Send a message to Maarten and Willem, or ask during one of the calls, to activat
     ```bash
     # cert-manager requires port 9402 to be allowed from the firewall
     sudo ufw allow 9402
+    # It might require to lower the firewall at the initial installation  
+    # sudo ufw disable
     sudo microk8s enable cert-manager
+    # sudo ufw enable
     ```
 
 5. **Configure clusterIssuer:** ClusterIssuer is a Kubernetes resource that represents a specific certificate authority or a way to obtain certificates for cluster-wide issuance. It uses the ACME protocol to interact with certificate authorities (e.g Let's Encrypt) and automate the certificate issuance process.
