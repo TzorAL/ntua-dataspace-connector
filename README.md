@@ -61,10 +61,7 @@ Send a message to Maarten and Willem, or ask during one of the calls, to activat
     # cert-manager requires ports 80,443 to be allowed from the firewall
     sudo ufw allow 80 
     sudo ufw allow 443
-    # It might require to temporarily disable firewall during the installation of this addon
-    # sudo ufw disable # completely disable firewall
     sudo microk8s enable ingress
-    # sudo ufw enable # enable firewall
     ```
 
 4. **Enable cert-manager addon:** Cert-manager is a tool for Kubernetes that makes it easy to get and manage security certificates for your websites or applications. Cert-manager talks to certificate authorities (like Let's Encrypt) automatically to get certificates for your domain.
