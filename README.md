@@ -164,7 +164,7 @@ Apply `cluster-issuer.yaml` file provided using:
     ```
     please update to appropriate names the `namespace` (e.g default) and `deployment-name` (e.g my-connector) fields
 
-6. Wait till you ensure connector pods are all in a running state (it might take at least a minute). You can watch the state of the pods using this command:
+6. Wait till you ensure connector pods are all in a ready (1/1) state (it might take at least a minute). You can watch the state of the pods using this command:
    ```bash
     watch microk8s kubectl get all --all-namespaces
    ```  
