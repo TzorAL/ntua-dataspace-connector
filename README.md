@@ -164,6 +164,11 @@ Apply `cluster-issuer.yaml` file provided using:
     ```
     please update to appropriate names the `namespace` (e.g default) and `deployment-name` (e.g my-connector) fields
 
+6. Wait till you ensure connector pods are all in a running state (it might take at least a minute). You can watch the state of the pods using this command:
+   ```bash
+    watch microk8s kubectl get all --all-namespaces
+   ```  
+
 The default data app should appear at the OpenAPI data app UI: `https://{domain-name}/data-app/` (forward slash at the end is necessary - not for show :))
 with the login matching the admin user with the provided BCrypt password.
 Also, after successful deployment, your connector should be available in the [Metadata Broker](https://broker.enershare.dataspac.es/#connectors).
