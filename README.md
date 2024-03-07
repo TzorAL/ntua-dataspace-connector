@@ -170,15 +170,14 @@ Apply `cluster-issuer.yaml` file provided using:
    ```  
 
 ## Interacting
-After deployment, the following user interfaces will be available:
-- https://{domain-name}/ui/
-- https://{domain-name}/data-app/
+After deployment, the following user interfaces will be available
+- `https://{domain-name}/ui/`
+- `https://{domain-name}/data-app/`
   
 with the login matching the admin user with the provided BCrypt password.
 
-The connector address that other connectors will use to communicate with your connector will be:
-- https://{domain-name}/router
-  
+The connector address that other connectors will use to communicate with your connector will be `https://{domain-name}/router`.
+
 Also, after successful deployment, your connector should be available in the [Metadata Broker](https://broker.enershare.dataspac.es/#connectors).
 
 ## Usage
