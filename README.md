@@ -169,8 +169,15 @@ Apply `cluster-issuer.yaml` file provided using:
     watch microk8s kubectl get all --all-namespaces
    ```  
 
-The default data app should appear at the OpenAPI data app UI: `https://{domain-name}/data-app/` (forward slash at the end is necessary - not for show :))
+## Interacting
+After deployment, the following user interfaces will be available:
+- https://{domain-name}/ui/
+- https://{domain-name}/data-app/
 with the login matching the admin user with the provided BCrypt password.
+
+The connector address that other connectors will use to communicate with your connector will be:
+- https://HOST/router
+  
 Also, after successful deployment, your connector should be available in the [Metadata Broker](https://broker.enershare.dataspac.es/#connectors).
 
 ## Usage
