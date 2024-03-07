@@ -144,12 +144,12 @@ Apply `cluster-issuer.yaml` file provided using:
       ```
     - (Optionally) Modify `password` field: Create your own BCrypt encoded password for the admin user of the connector (also used in the default configuration to secure the ingress of the data app).
       ```yaml
-          users:
-            - id: admin
+      users:
+          - id: admin
               # -- BCrypt encoded password
               password: $2a$12$cOEhdassfs/gcpyCasafrefeweQ0axdsaafrswIuKysZdeJMArNxfsasjfbeajsaf
               roles:
-                - ADMIN
+                  - ADMIN
       ```
     
 3. Create IDS Identity secret: Cert-manager stores TLS certificates as Kubernetes secrets, making them easily accessible to your applications. When certificates are renewed, the updated certificates are automatically stored in the corresponding secrets. Create an Kubernetes secret containing the certificates acquired from identity creation.
