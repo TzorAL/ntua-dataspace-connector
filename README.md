@@ -100,7 +100,7 @@ Apply `cluster-issuer.yaml` file provided using:
 
 ## Deployment
 
-1. Configure the Helm Chart: update the `values.yaml` file with the modifications to the configuration (see `values.ntua.yml` as an example).
+1. Configure the Helm Chart: update the `values.yaml` file with the modifications to the configuration (see `/examples/values.ntua.yml` as an example).
 
     In this guide, it is assumed that you have followed the instructions in the [Requirements](#requirements) section. 
     Please refer to the official TSG gitlab [page](https://gitlab.com/tno-tsg/helm-charts/connector/-/blob/master/README.md?ref_type=heads) for further information with regards to the configuration.
@@ -111,7 +111,7 @@ Apply `cluster-issuer.yaml` file provided using:
         ```yaml
         host: {domain-name}
         ```
-    - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.ntua.yml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID. (Optionally) change `titles`and `descriptions` to the connector name, and a more descriptive description of your service in the future:
+    - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.yml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID. (Optionally) change `titles`and `descriptions` to the connector name, and a more descriptive description of your service in the future:
         ```yaml
         ids:
           info:
