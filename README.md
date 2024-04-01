@@ -1,6 +1,6 @@
 # TSG/NTUA Connector Configuration Guide
 
-This repository contains the installation instructions for the [TSG IDS Connector](https://gitlab.com/tno-tsg/helm-charts/connector) customized to the specifications of NTUA as part of the Enershare project. 
+This repository contains the installation instructions for the TSG IDS Connector customized to the specifications of NTUA as part of the Enershare project. 
 It is the basis for deploying and configuring the components related to the connector (core container, administration UI, and data apps). The guide has been heavily inspired by TSG's [guide](https://gitlab.com/tno-tsg/projects/enershare).
 
 ## Requirements
