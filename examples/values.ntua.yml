@@ -11,7 +11,7 @@ coreContainer:
     path: /(.*)
     rewriteTarget: /$1
     clusterIssuer: letsencrypt
-    ingressClass: nginx
+    ingressClass: public
 
 adminUi:
   enabled: true
@@ -19,6 +19,8 @@ adminUi:
   ingress:
     path: /ui/(.*)
     rewriteTarget: /$1
+    clusterIssuer: letsencrypt
+    ingressClass: public
 
 ids:
   info:
@@ -70,9 +72,9 @@ containers:
       openApi:
         usePolicyEnforcement: false
         agents:
-          - id: urn:ids:enershare:connectors:NTUA:Consumer:ProviderAgent
+          - id: urn:ids:enershare:connectors:NTUA:Consumer:ConsumerAgent
             backEndUrlMapping:
-              0.5: http://postgrest-service:8886
+              0.5: http://enershare.epu.ntua.gr:8886
             title: Swagger API
             openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/enershare_ntua/enershare-postgREST/
             versions:
@@ -81,7 +83,7 @@ containers:
       - port: 8080
         name: http
         ingress:
-          path: /data-app/(.*)
+          path: /consumer-data-app/(.*)
           rewriteTarget: /$1
           clusterIssuer: letsencrypt
-          ingressClass: nginx
+          ingressClass: public
