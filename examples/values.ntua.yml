@@ -1,6 +1,9 @@
 host: enershare.epu.ntua.gr
 
 coreContainer:
+  secrets:
+    idsIdentity:
+      name: ids-identity-secret
   image: docker.nexus.dataspac.es/core-container:1.2.0
   environment:
   - name: ENABLE_OCSP
