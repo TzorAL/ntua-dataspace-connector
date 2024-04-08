@@ -12,6 +12,9 @@ coreContainer:
     rewriteTarget: /$1
     clusterIssuer: letsencrypt
     ingressClass: public
+  secrets:
+    idsIdentity:
+      name: ids-identity-secret
 
 adminUi:
   enabled: true
