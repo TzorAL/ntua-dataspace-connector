@@ -137,10 +137,10 @@ Apply `cluster-issuer.yaml` file provided using:
             - {api-version}
       ```
    - **When using multiple connectors in the same cluster**: deploy connectors at different namespaces to avoid confusion between their certificates. Each connector namespace must contain the connector helm chart as well as its respective identity-secret. The data-app path must also be modified to avoid overlap. Both data-app path and the name of the identity secret can be configured in `values.yaml` respectively at:
-     ```
-      secrets:
-        idsIdentity:
-          name: {ids-identity-secret}
+     ```yaml
+     secrets:
+       idsIdentity:
+         name: {ids-identity-secret}
 
      ...
 
