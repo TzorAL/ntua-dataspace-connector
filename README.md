@@ -136,6 +136,24 @@ Apply `cluster-issuer.yaml` file provided using:
             versions: 
             - {api-version}
       ```
+   - **When using multiple connectors in the same cluster**: deploy connectors at different namespaces to avoid confusion between their certificates. Each connector namespace must contain the connector helm chart as well as its respective identity-secret. The data-app path must also be modified to avoid overlap. Both data-app path and the name of the identity secret can be configured in `values.yaml` respectively at:
+     ```
+      secrets:
+        idsIdentity:
+          name: {ids-identity-secret}
+
+     ...
+
+     services:
+      - port: 8080
+        name: http
+        ingress:
+          path: /{data-app}/(.*)
+          rewriteTarget: /$1
+          clusterIssuer: letsencrypt
+          ingressClass: public
+     ```
+     
     - (Optionally) Modify `apiKey` and `key` fields: Change the bit after ``APIKEY-`` to a random API key used for interaction between the core container and the data app.
       ```yaml
       key: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE # CHANGE
