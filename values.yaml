@@ -11,7 +11,7 @@ coreContainer:
     path: /(.*)
     rewriteTarget: /$1
     clusterIssuer: letsencrypt
-    ingressClass: nginx
+    ingressClass: public
 
 adminUi:
   enabled: true
@@ -84,4 +84,4 @@ containers:
           path: /data-app/(.*)
           rewriteTarget: /$1
           clusterIssuer: letsencrypt
-          ingressClass: nginx
+          ingressClass: public
