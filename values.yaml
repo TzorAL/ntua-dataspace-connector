@@ -14,7 +14,7 @@ coreContainer:
     ingressClass: public
   secrets:
     idsIdentity:
-      name: ids-identity-secret
+      name: {ids-identity-secret}
 
 adminUi:
   enabled: true
@@ -84,7 +84,7 @@ containers:
       - port: 8080
         name: http
         ingress:
-          path: /data-app/(.*)
+          path: /{data-app}/(.*)
           rewriteTarget: /$1
           clusterIssuer: letsencrypt
           ingressClass: public
