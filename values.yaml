@@ -2,16 +2,16 @@ host: {host-name}
 
 coreContainer:
   image: docker.nexus.dataspac.es/core-container:1.2.0
-  environment:
-  - name: ENABLE_OCSP
-    value: "false"
-  - name: ENABLE_CRL
-    value: "false"
   ingress:
-    path: /(.*)
+    path: /{deployment-name}/(.*)
     rewriteTarget: /$1
     clusterIssuer: letsencrypt
     ingressClass: public
+  environment:
+    - name: ENABLE_OCSP
+      value: "false"
+    - name: ENABLE_CRL
+      value: "false"
   secrets:
     idsIdentity:
       name: {ids-identity-secret}
@@ -20,8 +20,10 @@ adminUi:
   enabled: true
   image: docker.nexus.dataspac.es/ui/core-container-ui:master
   ingress:
-    path: /ui/(.*)
+    path: /{deployment-name}/ui/(.*)
     rewriteTarget: /$1
+    clusterIssuer: letsencrypt
+    ingressClass: nginx
 
 ids:
   info:
@@ -35,13 +37,6 @@ ids:
     accessUrl:
       - https://CONNECTOR_ACCESS_URL/router
 
-  routes:
-    ingress:
-      http:
-        - dataApp: http://{{ template "tsg-connector.fullname" . }}-openapi-data-app-http:8080/router
-          endpoint: router
-          parameters: "&matchOnUriPrefix=true"
-  
   security:
     apiKeys:
       - id: default
@@ -63,6 +58,13 @@ ids:
     id: urn:ids:enershare:connectors:MetadataBroker
     address: https://broker.enershare.dataspac.es/infrastructure
     autoRegister: true
+
+  routes:
+    ingress:
+      http:
+        - dataApp: http://{{ template "tsg-connector.fullname" . }}-openapi-data-app-http:8080/router
+          endpoint: router
+          parameters: "&matchOnUriPrefix=true"
 
 containers:
   - type: data-app
