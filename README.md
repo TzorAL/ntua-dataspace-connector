@@ -148,7 +148,7 @@ Apply `cluster-issuer.yaml` file provided using:
                  name: {ids-identity-secret}
             ```
         - the ingress path at `coreContainer.ingress.path` and `adminUI.ingress.path`
-            ```
+            ```yaml
             ingress:
                 path: /{deployment-name}/ui/(.*)
                 rewriteTarget: /$1
