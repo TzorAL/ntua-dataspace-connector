@@ -23,7 +23,7 @@ adminUi:
     path: /{deployment-name}/ui/(.*)
     rewriteTarget: /$1
     clusterIssuer: letsencrypt
-    ingressClass: nginx
+    ingressClass: public
 
 ids:
   info:
@@ -35,7 +35,7 @@ ids:
     descriptions:
       - CONNECTOR DESCRIPTION@en
     accessUrl:
-      - https://CONNECTOR_ACCESS_URL/router
+      - https://CONNECTOR_ACCESS_URL/{deployment-name}/router
 
   security:
     apiKeys:
