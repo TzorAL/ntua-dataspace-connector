@@ -3,7 +3,7 @@ host: {host-name}
 coreContainer:
   image: docker.nexus.dataspac.es/core-container:1.2.0
   ingress:
-    path: /{deployment-name}/(.*)
+    path: /{deployment-name}/(.*)  # Remove "/{deployment-name}" if only connector in cluster and/or domain  
     rewriteTarget: /$1
     clusterIssuer: letsencrypt
     ingressClass: public
@@ -20,7 +20,7 @@ adminUi:
   enabled: true
   image: docker.nexus.dataspac.es/ui/core-container-ui:master
   ingress:
-    path: /{deployment-name}/ui/(.*)
+    path: /{deployment-name}/ui/(.*)  # Remove "/{deployment-name}" if only connector in cluster and/or domain
     rewriteTarget: /$1
     clusterIssuer: letsencrypt
     ingressClass: public
@@ -35,12 +35,12 @@ ids:
     descriptions:
       - CONNECTOR DESCRIPTION@en
     accessUrl:
-      - https://CONNECTOR_ACCESS_URL/{deployment-name}/router
+      - https://CONNECTOR_ACCESS_URL/{deployment-name}/router  # Remove "/{deployment-name}" if only connector in cluster and/or domain
 
   security:
     apiKeys:
       - id: default
-        key: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE # CHANGE (also at line 55)
+        key: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE
         roles:
           - DATA_APP
           - PEF_MANAGER
@@ -70,7 +70,7 @@ containers:
   - type: data-app
     name: openapi-data-app
     image: docker.nexus.dataspac.es/data-apps/openapi-data-app:2.1.0
-    apiKey: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE # CHANGE (also at line 32)
+    apiKey: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE
     config:
       openApi:
         usePolicyEnforcement: false  
