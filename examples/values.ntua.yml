@@ -1,26 +1,26 @@
 host: enershare.epu.ntua.gr
 
 coreContainer:
-  image: docker.nexus.dataspac.es/core-container:1.2.0
-  environment:
-  - name: ENABLE_OCSP
-    value: "false"
-  - name: ENABLE_CRL
-    value: "false"
+  secrets:
+    idsIdentity:
+      name: ids-consumer-secret
+  image: docker.nexus.dataspac.es/core-container:1.3.0
   ingress:
-    path: /(.*)
+    path: /ntua-consumer/(.*)
     rewriteTarget: /$1
     clusterIssuer: letsencrypt
     ingressClass: public
-  secrets:
-    idsIdentity:
-      name: ids-identity-secret
+  environment:
+    - name: ENABLE_OCSP
+      value: "false"
+    - name: ENABLE_CRL
+      value: "false"
 
 adminUi:
   enabled: true
   image: docker.nexus.dataspac.es/ui/core-container-ui:master
   ingress:
-    path: /ui/(.*)
+    path: /ntua-consumer/ui/(.*)
     rewriteTarget: /$1
     clusterIssuer: letsencrypt
     ingressClass: public
@@ -35,19 +35,11 @@ ids:
     descriptions:
       - NTUA Meter Consumer Example@en
     accessUrl:
-      - https://{{ .Values.host }}/router
-
-  routes:
-    ingress:
-      http:
-        - dataApp: http://{{ template "tsg-connector.fullname" . }}-openapi-data-app-http:8080/router
-          endpoint: router
-          parameters: "&matchOnUriPrefix=true"
-  
+      - https://{{ .Values.host }}/ntua-consumer/router  
   security:
     apiKeys:
       - id: default
-        key: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE # CHANGE (also at line 55)
+        key: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE
         roles:
           - DATA_APP
           - PEF_MANAGER
@@ -66,11 +58,18 @@ ids:
     address: https://broker.enershare.dataspac.es/infrastructure
     autoRegister: true
 
+  routes:
+    ingress:
+      http:
+        - dataApp: http://{{ template "tsg-connector.fullname" . }}-openapi-data-app-http:8080/router
+          endpoint: router
+          parameters: "&matchOnUriPrefix=true"
+
 containers:
   - type: data-app
     name: openapi-data-app
-    image: docker.nexus.dataspac.es/data-apps/openapi-data-app:2.1.0
-    apiKey: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE # CHANGE (also at line 32)
+    image: docker.nexus.dataspac.es/data-apps/openapi-data-app:2.3.0
+    apiKey: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE
     config:
       openApi:
         usePolicyEnforcement: false
