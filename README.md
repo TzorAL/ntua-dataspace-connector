@@ -122,8 +122,6 @@ Apply `cluster-issuer.yaml` file provided using:
               - {CONNECTOR TITLE@en}
             descriptions:
               - {CONNECTOR DESCRIPTION@en}
-            accessUrl:
-              - https://CONNECTOR_ACCESS_URL/router
         ```
     - Modify fields in the `agents` tab: Keep in mind that `api-version` is the version number you have used for your API when you uploaded in SwaggerHub (e.g 0.5). It is important to note that in order to retrieve the API spec for the data app, the URL used in the config should be the `/apiproxy/registry/` variant instead of the `/apis/` link from Swagger hub.
       ```yaml
