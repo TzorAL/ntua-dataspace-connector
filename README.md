@@ -205,8 +205,8 @@ Apply `cluster-issuer.yaml` file provided using:
 
 ## Interacting
 After deployment, the user interfaces for the : 
-- data space connector (`https://{domain-name}/ui/`)
-- connector data-app (`https://{domain-name}/data-app/`)
+- data space connector (`https://{domain-name}/{deployment-name}/ui/`)
+- connector data-app (`https://{domain-name}/{data-app}/`)
 
 will be available, with the login matching the admin user with the provided BCrypt password. 
 
