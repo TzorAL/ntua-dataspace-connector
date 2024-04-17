@@ -157,13 +157,13 @@ Apply `cluster-issuer.yaml` file provided using:
                 clusterIssuer: letsencrypt
                 ingressClass: public
             ```     
-    - (Optionally) Modify `apiKey` and `key` fields: Change the bit after ``APIKEY-`` to a random API key used for interaction between the core container and the data app.
+    - (Optionally) Modify `ids.security.apiKey.key` and `Containers.key` fields: Change the bit after ``APIKEY-`` to a random API key used for interaction between the core container and the data app.
       ```yaml
-      key: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE # CHANGE
+      key: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE
       ...
-      apiKey: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE # CHANGE 
+      apiKey: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE
       ```
-    - (Optionally) Modify `password` field: Create your own BCrypt encoded password for the admin user of the connector (also used in the default configuration to secure the ingress of the data app).
+    - (Optionally) Modify `ids.security.users.password` field: Create your own BCrypt encoded password for the admin user of the connector (also used in the default configuration to secure the ingress of the data app).
       ```yaml
       users:
           - id: admin
@@ -226,7 +226,7 @@ In the OpenAPI data app UI:
 
 To delete the connector and remove all related resources:
 ```bash
-microk8s kubectl delete clusterissuer lets-encrypt
-microk8s kubectl delete secret/ids-identity-secret
+microk8s kubectl delete clusterissuer lets-encrypt -n {namespace}
+microk8s kubectl delete secret/ids-identity-secret -n {namespace}
 microk8s helm uninstall {deployment-name} -n {namespace}
 ```
