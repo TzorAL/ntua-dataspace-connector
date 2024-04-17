@@ -135,9 +135,13 @@ Apply `cluster-issuer.yaml` file provided using:
             - {api-version}
       ```
    - **When using multiple connectors in the same cluster**: deploy connectors at different namespaces to avoid confusion between their certificates. Each connector namespace must contain the connector helm chart as well as its respective identity-secret. Additionally, to avoid overlap between connectors in the same namespace or/and domain, you should also modify in the `values.yaml`:
-        - the data-app path at `services.ingress.path`
+        - the data-app path at `containers.services.ingress.path`
             ```yaml
-              path: /{data-app}/(.*)
+             services:
+               - port: 8080
+                 name: http
+                 ingress:
+                   path: /{data-app}/(.*)
             ```
         - the name of the identity secret at `coreContainer.secrets.idsIdentity.name`
             ```yaml
