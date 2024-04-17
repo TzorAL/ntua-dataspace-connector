@@ -136,24 +136,25 @@ Apply `cluster-issuer.yaml` file provided using:
             versions: 
             - {api-version}
       ```
-   - **When using multiple connectors in the same cluster**: deploy connectors at different namespaces to avoid confusion between their certificates. Each connector namespace must contain the connector helm chart as well as its respective identity-secret. The data-app path must also be modified to avoid overlap. Both data-app path and the name of the identity secret can be configured in `values.yaml` respectively at:
-     ```yaml
-     secrets:
-       idsIdentity:
-         name: {ids-identity-secret}
-
-     ...
-
-     services:
-      - port: 8080
-        name: http
-        ingress:
-          path: /{data-app}/(.*)
-          rewriteTarget: /$1
-          clusterIssuer: letsencrypt
-          ingressClass: public
-     ```
-     
+   - **When using multiple connectors in the same cluster**: deploy connectors at different namespaces to avoid confusion between their certificates. Each connector namespace must contain the connector helm chart as well as its respective identity-secret. Additionally, to avoid overlap between connectors in the same namespace or/and domain, you should also modify in the `values.yaml`:
+        - the data-app path at `services.ingress.path`
+            ```yaml
+              path: /{data-app}/(.*)
+            ```
+        - the name of the identity secret at `coreContainer.secrets.idsIdentity.name`
+            ```yaml
+             secrets:
+               idsIdentity:
+                 name: {ids-identity-secret}
+            ```
+        - the ingress path at `coreContainer.ingress.path` and `adminUI.ingress.path`
+            ```
+            ingress:
+                path: /{deployment-name}/ui/(.*)
+                rewriteTarget: /$1
+                clusterIssuer: letsencrypt
+                ingressClass: public
+            ```     
     - (Optionally) Modify `apiKey` and `key` fields: Change the bit after ``APIKEY-`` to a random API key used for interaction between the core container and the data app.
       ```yaml
       key: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE # CHANGE
