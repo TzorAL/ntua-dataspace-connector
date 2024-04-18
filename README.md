@@ -227,18 +227,10 @@ To ensure that the OpenAPI data app knows where to route the request, you can in
 - `Forward-ID`: the Agent ID of the service registered at the party you wish to interact with (reciever)
 - `Forward-Sender`: your own Agent ID for identification purposes (`{IDS_COMPONENT_ID}`)
 
-```python
-headers = {
-    'Authorization': 'Bearer' + {ids.security.key},                                      # API key defined in "values.yaml" file at "is.security.key"
-    'Forward-Id': 'urn:ids:enershare:connectors:NTUA:Consumer:ConsumerAgent',            # reciever connector ID
-    'Forward-Sender': 'urn:ids:enershare:connectors:NTUA:Provider:ProviderAgent'         # Sender connector ID
-}
-```
-
 If you are using external authentication, it is advisable not to make calls to the OpenAPI data app via the ingress. 
 In such cases, you can deploy your service in the same Kubernetes cluster as the data app and use the internal Kubernetes service URL to access the data app.
 
-For a more concrete template example, please look at `/examples/client-app.py`. The `APIKEY-` is frequently updated, so the script might not work at the time of your execution.
+For a more concrete template example, please look at `/examples/client-app.py`. The script might not work at the time of your execution, as the credentials will be updated
 
 ## Usage
 
