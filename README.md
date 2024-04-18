@@ -204,15 +204,41 @@ Apply `cluster-issuer.yaml` file provided using:
    ```  
 
 ## Interacting
+
+The connector address that other connectors will use to communicate with your connector will be `https://{domain-name}/router`. 
+
+Also, after successful deployment, your connector should be available in the [Metadata Broker](https://broker.enershare.dataspac.es/#connectors).
+
+### GUI
 After deployment, the user interfaces for the : 
 - data space connector (`https://{domain-name}/{deployment-name}/ui/`)
 - connector data-app (`https://{domain-name}/{data-app}/`)
 
 will be available, with the login matching the admin user with the provided BCrypt password. 
 
-The connector address that other connectors will use to communicate with your connector will be `https://{domain-name}/router`. 
+### Programmatically
 
-Also, after successful deployment, your connector should be available in the [Metadata Broker](https://broker.enershare.dataspac.es/#connectors).
+To utilize the functionality of the Open API data app programmatically, you can make client side calls to query the app. 
+This is the same method used by the app's user interface. The structure of these calls is as follows: `https://<baseurl>/<data-app-path>/openapi/<version>/<endpoint>`. 
+The baseurl represents the URL where your connector is deployed, while the `data-app-path` refers to the path used for the data app. 
+For the `version`, you should select the version of your own backend service, and for the endpoint, choose an endpoint specific to your service.
+To ensure that the OpenAPI data app knows where to route the request, you can include headers with the request. The headers used are the:
+- `Authorization`:  the Bearer Authentication HTTP header, so the field is filled as `Bearer` plus the API key defined in `values.yaml` file at `is.security.key`
+- `Forward-ID`: the Agent ID of the service registered at the party you wish to interact with (reciever)
+- `Forward-Sender`: your own Agent ID for identification purposes (`{IDS_COMPONENT_ID}`)
+
+```python
+headers = {
+    'Authorization': 'Bearer' + {ids/security.key},
+    'Forward-Id': 'urn:ids:enershare:connectors:NTUA:Consumer:ConsumerAgent',         # reciever connector ID
+    'Forward-Sender': 'urn:ids:enershare:connectors:NTUA:Provider:ProviderAgent'      # Sender connector ID
+}
+```
+
+If you are using external authentication, it is advisable not to make calls to the OpenAPI data app via the ingress. 
+In such cases, you can deploy your service in the same Kubernetes cluster as the data app and use the internal Kubernetes service URL to access the data app.
+
+For a more concrete template example, please look at `/examples/client-app.py`. The `APIKEY-` is frequently update, so the script might not work at the time of your execution.
 
 ## Usage
 
