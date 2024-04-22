@@ -5,7 +5,7 @@ import json
 url = 'https://enershare.epu.ntua.gr/provider-data-app/openapi/0.5/'    # https://<baseurl>/<data-app-path>/openapi/<beckend-service-version>/
 endpoint = 'efcomp'                                                     # API endpoint 
 
-jwt_token = 'APIKEY-tfiXkagpufdLKvdyyXxwEMwG' # API key defined in values.yaml file at "is.security.key"
+jwt_token = 'APIKEY-tfiXkagpufdLKvdyyXxwEMwG' # API key defined in values.yaml file at "containers.apiKey"
 
 # Headers (if any)
 headers = {
