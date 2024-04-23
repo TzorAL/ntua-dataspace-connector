@@ -190,12 +190,12 @@ Apply `cluster-issuer.yaml` file provided using:
 
 6. To install the Helm chart, execute:
     ```bash
-    microk8s helm upgrade --install \
-            -n {namespace} \
+    microk8s helm upgrade --install                              \
+            -n {namespace}                                       \
             --repo https://nexus.dataspac.es/repository/tsg-helm \
-            --version 3.2.8 \
-            -f values.yaml \
-            {deployment-name} \
+            --version 3.2.8                                      \
+            -f values.yaml                                       \
+            {deployment-name}                                    \
             tsg-connector
     ```
     please update to appropriate names the `namespace` (e.g default) and `deployment-name` (e.g my-connector) fields
