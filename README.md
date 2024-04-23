@@ -244,7 +244,7 @@ In the OpenAPI data app UI:
 
 To delete the connector and remove all related resources:
 ```bash
-microk8s kubectl delete clusterissuer lets-encrypt -n {namespace}
+microk8s kubectl delete clusterissuer letsencrypt -n {namespace}
 microk8s kubectl delete secret/ids-identity-secret -n {namespace}
 microk8s helm uninstall {deployment-name} -n {namespace}
 ```
