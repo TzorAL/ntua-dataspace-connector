@@ -177,16 +177,18 @@ Apply `cluster-issuer.yaml` file provided using:
     ```bash
     microk8s kubectl create secret generic ids-identity-secret --from-file=ids.crt=./component.crt \
                                                                --from-file=ids.key=./component.key \
-                                                               --from-file=ca.crt=./cachain.crt 
+                                                               --from-file=ca.crt=./cachain.crt    \
+                                                               -n {namespace} 
     ```
-
-4. Add the Helm repository of the TSG components:
+    please update to appropriate names the `namespace` (e.g default)
+   
+5. Add the Helm repository of the TSG components:
     ```bash
     helm repo add tsg https://nexus.dataspac.es/repository/tsg-helm
     helm repo update
     ```
 
-5. To install the Helm chart, execute:
+6. To install the Helm chart, execute:
     ```bash
     microk8s helm upgrade --install \
             -n {namespace} \
@@ -198,7 +200,7 @@ Apply `cluster-issuer.yaml` file provided using:
     ```
     please update to appropriate names the `namespace` (e.g default) and `deployment-name` (e.g my-connector) fields
 
-6. Wait till you ensure connector pods are all in a ready (1/1) state (it might take at least a minute). You can watch the state of the pods using this command:
+7. Wait till you ensure connector pods are all in a ready (1/1) state (it might take at least a minute). You can watch the state of the pods using this command:
    ```bash
     watch microk8s kubectl get all --all-namespaces
    ```  
