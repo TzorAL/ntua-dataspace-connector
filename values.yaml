@@ -35,7 +35,7 @@ ids:
     descriptions:
       - CONNECTOR DESCRIPTION@en
     accessUrl:
-      - https://CONNECTOR_ACCESS_URL/{deployment-name}/router  # Remove "/{deployment-name}" if only connector in cluster and/or domain
+      - https://{{ .Values.host }}/{deployment-name}/router  # Remove "/{deployment-name}" if only connector in cluster and/or domain
 
   security:
     apiKeys:
