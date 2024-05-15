@@ -220,19 +220,25 @@ will be available, with the login matching the admin user with the provided BCry
 
 ### Programmatically
 
-To utilize the functionality of the Open API data app programmatically, you can make client side calls to query the app. 
-This is the same method used by the app's user interface. The structure of these calls is as follows: `https://<baseurl>/<data-app-path>/openapi/<version>/<endpoint>`. 
+To utilize the functionality of the Open API data app programmatically, you can make client side calls to query the app. This is the same method used by the app's user interface.
+For a more concrete template example, please look at `/examples/client-app.py`, where we use [python requests](https://requests.readthedocs.io/en/latest/user/quickstart/) to perform API calls to the connector. Please note that the script might not work at the time of your execution, as the credentials will be updated.
+
+#### URL
+The structure of these calls is as follows: `https://<baseurl>/<data-app-path>/openapi/<version>/<endpoint>`. 
 The baseurl represents the URL where your connector is deployed, while the `data-app-path` refers to the path used for the data app. 
 For the `version`, you should select the version of your own backend service, and for the endpoint, choose an endpoint specific to your service.
+
+#### Headers
 To ensure that the OpenAPI data app knows where to route the request, you can include headers with the request. The headers used are the:
 - `Authorization`:  the Bearer Authentication HTTP header, so the field is filled as `Bearer` plus the API key defined in `values.yaml` file at `is.security.key`
 - `Forward-ID`: the Agent ID of the service registered at the party you wish to interact with (reciever)
 - `Forward-Sender`: your own Agent ID for identification purposes (`{IDS_COMPONENT_ID}`)
 
+#### Params
+In case of Query parameters are not URL encoded and therefore, if you need to perform queries, require to use the `params` option.
+
 If you are using external authentication, it is advisable not to make calls to the OpenAPI data app via the ingress. 
 In such cases, you can deploy your service in the same Kubernetes cluster as the data app and use the internal Kubernetes service URL to access the data app.
-
-For a more concrete template example, please look at `/examples/client-app.py`. The script might not work at the time of your execution, as the credentials will be updated
 
 ## Usage
 
