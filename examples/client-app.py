@@ -27,11 +27,9 @@ params = {
     "select": "*&and=(timestamp.gte.2018-07-01T00:00:00,timestamp.lte.2018-07-02T00:00:00)",
 }
 
-# full_url = f'{base_url}{endpoint}'
-print(full_url)
 # Sending GET request
 response = requests.get(full_url, headers=headers, params=params)
-print(response.url)
+
 # Check if request was successful (status code 200)
 if response.status_code == 200:
     try:
