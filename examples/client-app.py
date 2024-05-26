@@ -1,27 +1,45 @@
 import requests
 import json
+from dotenv import load_dotenv
+import os
 
-# API endpoint
-url = 'https://enershare.epu.ntua.gr/provider-data-app/openapi/0.5/'    # https://<baseurl>/<data-app-path>/openapi/<beckend-service-version>/
-endpoint = 'efcomp'                                                     # API endpoint 
+# Load the .env file
+load_dotenv()
+storage_path = os.environ.get("STORAGE_PATH")
+api_key = os.environ.get("API_KEY")
+provider_agent_id = os.environ.get("PROVIDER_AGENT_ID")
+consumer_agent_id = os.environ.get("CONSUMER_AGENT_ID")
+consumer_url = os.environ.get("CONSUMER_URL")
+api_version = os.environ.get("API_VERSION")
+endpoint = os.environ.get("ENDPOINT")
 
-jwt_token = 'APIKEY-tfiXkagpufdLKvdyyXxwEMwG' # API key defined in values.yaml file at "containers.apiKey"
-
-# Headers (if any)
+full_url = f'{consumer_url}/{api_version}/{endpoint}' # https://<baseurl>/<data-app-path>/openapi/<beckend-service-version>/
+                                                     
+#  agent IDs must contain the full name (connector name + agent id)
 headers = {
-    'Authorization': 'Bearer' + jwt_token,
-    'Forward-Id': 'urn:ids:enershare:connectors:NTUA:Consumer:ConsumerAgent',         # reciever connector ID
-    'Forward-Sender': 'urn:ids:enershare:connectors:NTUA:Provider:ProviderAgent'      # Sender connector ID
+    'Authorization': 'Bearer' + api_key,  # JWT token
+    'Forward-Id': provider_agent_id,         # reciever connector ID
+    'Forward-Sender': consumer_agent_id      # Sender connector ID
 }
 
-# Sending GET request
-response = requests.get(url+endpoint, headers=headers)
+# params used for querying - varies depending on api accessed through the connector
+params = {
+    "select": "*&and=(timestamp.gte.2018-07-01T00:00:00,timestamp.lte.2018-07-02T00:00:00)",
+}
 
+# full_url = f'{base_url}{endpoint}'
+print(full_url)
+# Sending GET request
+response = requests.get(full_url, headers=headers, params=params)
+print(response.url)
 # Check if request was successful (status code 200)
 if response.status_code == 200:
     try:
         data = response.json()  # Attempt to decode JSON
-        print(json.dumps(data, indent=4))
+        print("Number of entries:", len(data))
+        print(json.dumps(data, indent=1))
+        for item in data:
+            print(json.dumps(item, separators=(',', ':')))
     except ValueError:  # includes simplejson.decoder.JSONDecodeError
         print("Response content is not valid JSON")
         print(response.text)
