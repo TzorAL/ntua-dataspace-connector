@@ -5,7 +5,6 @@ import os
 
 # Load the .env file
 load_dotenv()
-storage_path = os.environ.get("STORAGE_PATH")
 api_key = os.environ.get("API_KEY")
 provider_agent_id = os.environ.get("PROVIDER_AGENT_ID")
 consumer_agent_id = os.environ.get("CONSUMER_AGENT_ID")
