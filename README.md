@@ -109,30 +109,30 @@ Apply `cluster-issuer.yaml` file provided using:
     
     - Modify `host` to the domain name you configured with the ingress controller:
         ```yaml
-        host: {domain-name}
+        host: ${domain-name}
         ```
     - Modify `ids.info.idsid`, `ids.info.curator`, `ids.info.maintainer` in the `values.yml` file to the corresponding identifiers that you filled in during creation of the certificates. `ids.info.idsid` should be the Connector ID, and `ids.info.curator`, `ids.info.maintainer` should be the Participant ID. (Optionally) change `titles`and `descriptions` to the connector name, and a more descriptive description of your service in the future:
         ```yaml
         ids:
           info:
-            idsid: {IDS_COMPONENT_ID}
-            curator: {IDS_PARTICIPANT_ID}
-            maintainer: {IDS_PARTICIPANT_ID}
+            idsid: ${IDS_COMPONENT_ID}
+            curator: ${IDS_PARTICIPANT_ID}
+            maintainer: ${IDS_PARTICIPANT_ID}
             titles:
-              - {CONNECTOR TITLE@en}
+              - ${CONNECTOR TITLE@en}
             descriptions:
-              - {CONNECTOR DESCRIPTION@en}
+              - ${CONNECTOR DESCRIPTION@en}
         ```
     - Modify fields in the `agents` tab: Keep in mind that `api-version` is the version number you have used for your API when you uploaded in SwaggerHub (e.g 0.5). It is important to note that in order to retrieve the API spec for the data app, the URL used in the config should be the `/apiproxy/registry/` variant instead of the `/apis/` link from Swagger hub.
       ```yaml
       agents:
-          - id: {IDS_COMPONENT_ID}:{AgentName} # custom agent defined by user
+          - id: ${IDS_COMPONENT_ID}:${AgentName} # custom agent defined by user
             backEndUrlMapping:
-              {api-version}: http://{service-name}:{internal-service-port}
+              ${api-version}: http://${service-name}:${internal-service-port}
             title: SERVICE TITLE
-            openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/{username}/{api-name}/
+            openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/${username}/${api-name}/
             versions: 
-            - {api-version}
+            - ${api-version}
       ```
    - **When using multiple connectors in the same cluster**: deploy connectors at different namespaces to avoid confusion between their certificates. Each connector namespace must contain the connector helm chart as well as its respective identity-secret. Additionally, to avoid overlap between connectors in the same namespace or/and domain, you should also modify in the `values.yaml`:
         - the data-app path at `containers.services.ingress.path`
@@ -141,18 +141,18 @@ Apply `cluster-issuer.yaml` file provided using:
                - port: 8080
                  name: http
                  ingress:
-                   path: /{data-app}/(.*)
+                   path: /${data-app}/(.*)
             ```
         - the name of the identity secret at `coreContainer.secrets.idsIdentity.name`
             ```yaml
              secrets:
                idsIdentity:
-                 name: {ids-identity-secret}
+                 name: ${ids-identity-secret}
             ```
         - the ingress path at `coreContainer.ingress.path` and `adminUI.ingress.path`
             ```yaml
             ingress:
-                path: /{deployment-name}/ui/(.*)
+                path: /${deployment-name}/ui/(.*)
                 rewriteTarget: /$1
                 clusterIssuer: letsencrypt
                 ingressClass: public
@@ -178,7 +178,7 @@ Apply `cluster-issuer.yaml` file provided using:
     microk8s kubectl create secret generic ids-identity-secret --from-file=ids.crt=./component.crt \
                                                                --from-file=ids.key=./component.key \
                                                                --from-file=ca.crt=./cachain.crt    \
-                                                               -n {namespace} 
+                                                               -n ${namespace} 
     ```
     please update to appropriate names the `namespace` (e.g default)
    
@@ -191,11 +191,11 @@ Apply `cluster-issuer.yaml` file provided using:
 6. To install the Helm chart, execute:
     ```bash
     microk8s helm upgrade --install                              \
-            -n {namespace}                                       \
+            -n ${namespace}                                       \
             --repo https://nexus.dataspac.es/repository/tsg-helm \
             --version 3.2.8                                      \
             -f values.yaml                                       \
-            {deployment-name}                                    \
+            ${deployment-name}                                    \
             tsg-connector
     ```
     please update to appropriate names the `namespace` (e.g default) and `deployment-name` (e.g my-connector) fields
@@ -207,14 +207,14 @@ Apply `cluster-issuer.yaml` file provided using:
 
 ## Interacting
 
-The connector address that other connectors will use to communicate with your connector will be `https://{domain-name}/router`. 
+The connector address that other connectors will use to communicate with your connector will be `https://${domain-name}/router`. 
 
 Also, after successful deployment, your connector should be available in the [Metadata Broker](https://broker.enershare.dataspac.es/#connectors).
 
 ### GUI
 After deployment, the user interfaces for the : 
-- data space connector (`https://{domain-name}/{deployment-name}/ui/`)
-- connector data-app (`https://{domain-name}/{data-app}/`)
+- data space connector (`https://${domain-name}/${deployment-name}/ui/`)
+- connector data-app (`https://${domain-name}/${data-app}/`)
 
 will be available, with the login matching the admin user with the provided BCrypt password. 
 
@@ -232,7 +232,7 @@ For the `version`, you should select the version of your own backend service, an
 To ensure that the OpenAPI data app knows where to route the request, you can include headers with the request. The headers used are the:
 - `Authorization`:  the Bearer Authentication HTTP header, so the field is filled as `Bearer` plus the API key defined in `values.yaml` file at `is.security.key`
 - `Forward-ID`: the Agent ID of the service registered at the party you wish to interact with (reciever)
-- `Forward-Sender`: your own Agent ID for identification purposes (`{IDS_COMPONENT_ID}`)
+- `Forward-Sender`: your own Agent ID for identification purposes (`${IDS_COMPONENT_ID}`)
 
 #### Params
 In case of Query parameters are not URL encoded and therefore, if you need to perform queries, require to use the `params` option.
@@ -252,7 +252,7 @@ In the OpenAPI data app UI:
 
 To delete the connector and remove all related resources:
 ```bash
-microk8s kubectl delete clusterissuer letsencrypt -n {namespace}
-microk8s kubectl delete secret/{ids-identity-secret} -n {namespace}
-microk8s helm uninstall {deployment-name} -n {namespace}
+microk8s kubectl delete clusterissuer letsencrypt -n ${namespace}
+microk8s kubectl delete secret/${ids-identity-secret} -n ${namespace}
+microk8s helm uninstall ${deployment-name} -n ${namespace}
 ```
