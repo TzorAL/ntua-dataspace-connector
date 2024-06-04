@@ -1,0 +1,86 @@
+host: ${HOST}
+
+coreContainer:
+  secrets:
+    idsIdentity:
+      name: ${IDS_CONSUMER_SECRET}
+  image: docker.nexus.dataspac.es/core-container:1.3.0
+  ingress:
+    path: /ntua-consumer/(.*)
+    rewriteTarget: /$1
+    clusterIssuer: letsencrypt
+    ingressClass: public
+  environment:
+    - name: ENABLE_OCSP
+      value: "false"
+    - name: ENABLE_CRL
+      value: "false"
+
+adminUi:
+  enabled: true
+  image: docker.nexus.dataspac.es/ui/core-container-ui:master
+  ingress:
+    path: /ntua-consumer/ui/(.*)
+    rewriteTarget: /$1
+    clusterIssuer: letsencrypt
+    ingressClass: public
+
+ids:
+  info:
+    idsid: ${IDSID}
+    curator: ${PARTICIPANTID}
+    maintainer: ${PARTICIPANTID}
+    titles:
+      - ${TITLE}
+    descriptions:
+      - ${DESCRIPTION}
+    accessUrl:
+      - ${ACCESS_URL}
+  security:
+    apiKeys:
+      - id: default
+        key: ${API_KEY}
+        roles:
+          - DATA_APP
+          - PEF_MANAGER
+    users:
+      - id: admin
+        # -- BCrypt encoded password (defaults to enershare)
+        password: ${ADMIN_PASSWORD}
+        roles:
+          - ADMIN
+
+  daps:
+    url: https://daps.enershare.dataspac.es/v2
+
+  broker:
+    id: urn:ids:enershare:connectors:MetadataBroker
+    address: https://broker.enershare.dataspac.es/infrastructure
+    autoRegister: true
+
+  routes:
+    ingress:
+      http:
+        - dataApp: http://{{ template "tsg-connector.fullname" . }}-openapi-data-app-http:8080/router
+          endpoint: router
+          parameters: "&matchOnUriPrefix=true"
+
+containers:
+  - type: data-app
+    name: openapi-data-app
+    image: docker.nexus.dataspac.es/data-apps/openapi-data-app:2.3.1
+    apiKey: ${API_KEY}
+    config:
+      openApi:
+        usePolicyEnforcement: false
+        agents:
+          - id: ${CONSUMER_AGENT_ID}
+            title: Consumer Agent
+    services:
+      - port: 8080
+        name: http
+        ingress:
+          path: /consumer-data-app/(.*)
+          rewriteTarget: /$1
+          clusterIssuer: letsencrypt
+          ingressClass: public
