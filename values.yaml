@@ -1,9 +1,9 @@
-host: {host-name}
+host: ${host-name}
 
 coreContainer:
   image: docker.nexus.dataspac.es/core-container:1.2.0
   ingress:
-    path: /{deployment-name}/(.*)  # Remove "/{deployment-name}" if only connector in cluster and/or domain  
+    path: /${deployment-name}/(.*)  # Remove "/${deployment-name}" if only connector in cluster and/or domain  
     rewriteTarget: /$1
     clusterIssuer: letsencrypt
     ingressClass: public
@@ -14,28 +14,28 @@ coreContainer:
       value: "false"
   secrets:
     idsIdentity:
-      name: {ids-identity-secret}
+      name: ${ids-identity-secret}
 
 adminUi:
   enabled: true
   image: docker.nexus.dataspac.es/ui/core-container-ui:master
   ingress:
-    path: /{deployment-name}/ui/(.*)  # Remove "/{deployment-name}" if only connector in cluster and/or domain
+    path: /${deployment-name}/ui/(.*)  # Remove "/${deployment-name}" if only connector in cluster and/or domain
     rewriteTarget: /$1
     clusterIssuer: letsencrypt
     ingressClass: public
 
 ids:
   info:
-    idsid: {IDS_COMPONENT_ID}
-    curator: {IDS_PARTICIPANT_ID}
-    maintainer: {IDS_PARTICIPANT_ID}
+    idsid: ${IDS_COMPONENT_ID}
+    curator: ${IDS_PARTICIPANT_ID}
+    maintainer: ${IDS_PARTICIPANT_ID}
     titles:
       - CONNECTOR TITLE@en
     descriptions:
       - CONNECTOR DESCRIPTION@en
     accessUrl:
-      - https://{{ .Values.host }}/{deployment-name}/router  # Remove "/{deployment-name}" if only connector in cluster and/or domain
+      - https://{{ .Values.host }}/${deployment-name}/router  # Remove "/${deployment-name}" if only connector in cluster and/or domain
 
   security:
     apiKeys:
@@ -75,18 +75,18 @@ containers:
       openApi:
         usePolicyEnforcement: false  
         agents:
-            - id: {IDS_COMPONENT_ID}:{AgentName} # custom agent defined by user
+            - id: ${IDS_COMPONENT_ID}:${AgentName} # custom agent defined by user
               backEndUrlMapping:
-                {api-version}: http://{service-name}:{internal-service-port}
+                ${api-version}: http://${service-name}:${internal-service-port}
               title: SERVICE TITLE
-              openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/{username}/{api-name}/
+              openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/${username}/${api-name}/
               versions: 
-              - {api-version}            
+              - ${api-version}            
     services:
       - port: 8080
         name: http
         ingress:
-          path: /{data-app}/(.*)
+          path: /${data-app}/(.*)
           rewriteTarget: /$1
           clusterIssuer: letsencrypt
           ingressClass: public
