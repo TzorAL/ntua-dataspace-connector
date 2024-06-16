@@ -1,3 +1,5 @@
 # This file is used for deploying github pages - not relevant with the installation
 show_downloads: true
 theme: jekyll-theme-cayman
+include:
+  - README.md
