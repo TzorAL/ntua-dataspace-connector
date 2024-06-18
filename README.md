@@ -35,6 +35,14 @@ Send a message to Maarten and Willem, or ask during one of the calls, to activat
 ### 3. SwaggerHub 
 
 (For provider connectors) you need to have uploaded your API's documentation in [SwaggerHub](https://app.swaggerhub.com/home), when deploying APIs through the connector. See more details regarding its use in the [Deployment](#deployment) section 
+**Note:** As of version 2.3.1 of the OpenAPI data app (image docker.nexus.dataspac.es/data-apps/openapi-data-app:2.3.1), it is no longer necessery to add your openAPI description to Swaggerhub for the connector to find your app. 
+In `values.yaml` file, at both places where the `openApiBaseUrl` is allowed (on the root config of the data app and per agent) now also `openApiMapping` is supported. The structure is similar to `backendUrlMapping`, so per version the full URL of the OpenAPI document can be provided, e.g.:
+```yaml
+openApiMapping:
+  ${api-version}: http://path_to_api_description_json
+versions: 
+  - ${api-version}
+```
 
 ## Prerequisites
 
@@ -190,11 +198,11 @@ Apply `cluster-issuer.yaml` file provided using:
 
 6. To install the Helm chart, execute:
     ```bash
-    microk8s helm upgrade --install                              \
+    microk8s helm upgrade --install                               \
             -n ${namespace}                                       \
-            --repo https://nexus.dataspac.es/repository/tsg-helm \
-            --version 3.2.8                                      \
-            -f values.yaml                                       \
+            --repo https://nexus.dataspac.es/repository/tsg-helm  \
+            --version 3.2.8                                       \
+            -f values.yaml                                        \
             ${deployment-name}                                    \
             tsg-connector
     ```
