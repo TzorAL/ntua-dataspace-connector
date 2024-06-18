@@ -68,7 +68,7 @@ ids:
 containers:
   - type: data-app
     name: openapi-data-app
-    image: docker.nexus.dataspac.es/data-apps/openapi-data-app:2.3.0
+    image: docker.nexus.dataspac.es/data-apps/openapi-data-app:2.3.1
     apiKey: APIKEY-sgqgCPJWgQjmMWrKLAmkETDE
     config:
       openApi:
@@ -78,7 +78,9 @@ containers:
             backEndUrlMapping:
               0.5: http://enershare.epu.ntua.gr:8886
             title: Swagger API
-            openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/enershare_ntua/enershare-postgREST/
+            # openApiBaseUrl: https://app.swaggerhub.com/apiproxy/registry/enershare_ntua/enershare-postgREST/
+            openApiMapping:
+              0.5: http://enershare.epu.ntua.gr:8886/
             versions:
             - 0.5
     services:
