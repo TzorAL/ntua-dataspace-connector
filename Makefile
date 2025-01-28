@@ -35,6 +35,7 @@ namespace = $(name)-namespace
 secret-name = ids-$(name)-secret
 input_values = $(deployment-name)/values.ntua.encoded.yml
 output_values = $(deployment-name)/values.ntua.decoded.yml
+pod = 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Individual recipe steps ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -104,3 +105,15 @@ install-connector:
 uninstall-connector:
 	-microk8s kubectl delete secret/$(secret-name) -n $(namespace)
 	-microk8s helm uninstall $(deployment-name) -n $(namespace)
+
+watch-all:
+	microk8s kubectl get all --all-namespaces
+
+get-logs:
+	microk8s kubectl logs $(pod) -n $(namespace)
+
+get-description:
+	microk8s kubectl describe $(pod) -n $(namespace)
+
+cleanup:
+	./cleanup_pods.sh
